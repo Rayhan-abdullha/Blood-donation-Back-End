@@ -869,7 +869,7 @@ components:
               message:
                 type: string
                 example: "Bad request!"
-              data:
+              errorMessages:
                 type: array
                 items:
                   type: object

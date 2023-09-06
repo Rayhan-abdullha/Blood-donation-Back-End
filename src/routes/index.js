@@ -1,10 +1,5 @@
-const router = require("express").Router();
+const authRoutes = require("./auth");
 
-router
-  .route("/api/v1/auth")
-  .get((req, res) => {
-    res.send("hello");
-  })
-  .post();
-
-module.exports = router;
+module.exports = {
+  authRoutes,
+};
