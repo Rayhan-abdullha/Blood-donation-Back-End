@@ -1,13 +1,6 @@
-const express = require("express");
-const cors = require("cors");
-const swaggerUi = require("swagger-ui-express");
-const YAML = require("yamljs");
-const swaggerDoc = YAML.load("./swagger.yaml");
-
-const applyMiddleWare = (app) => {
-  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
-  app.use(express.json());
-  app.use(cors());
+const applyMiddleWare = require("./applyMiddlware");
+const userSchema = require("./userSchemaValidate");
+module.exports = {
+  applyMiddleWare,
+  userSchema,
 };
-
-module.exports = applyMiddleWare;

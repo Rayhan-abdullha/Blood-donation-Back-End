@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 8000;
 const main = async () => {
   try {
     await connectDB();
-    errorLogger.error("Database is Connected");
+    infoLogger.info("Database is Connected");
     server = server.listen(PORT, () => {
       infoLogger.info(`Server is listing on PORT ${PORT}`);
     });

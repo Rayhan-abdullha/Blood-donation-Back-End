@@ -6,8 +6,8 @@ const userSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      minlength: 2,
-      maxlength: 50,
+      minlength: 3,
+      maxlength: 20,
     },
     email: {
       type: String,
@@ -26,6 +26,18 @@ const userSchema = new Schema(
       type: String,
       required: true,
       minlength: [6, "Password is too Short"],
+    },
+    role: {
+      type: [String],
+      enum: ["user", "volunteer", "admin"],
+      default: ["user"],
+    },
+    cover: {
+      type: String,
+    },
+    volunteer: {
+      type: Schema.ObjectId,
+      ref: "Volunteer",
     },
   },
   {
