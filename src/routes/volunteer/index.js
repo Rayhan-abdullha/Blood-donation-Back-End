@@ -6,6 +6,7 @@ router
   .post(
     volunterSchema.createVolunteerValidation,
     volunteerController.createVolunteer
-  );
+  )
+  .get(volunteerController.findAllVolunters);
 
 module.exports = router;

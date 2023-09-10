@@ -1,5 +1,3 @@
 const createVolunteer = require("./createVolunteer");
-
-module.exports = {
-  createVolunteer,
-};
+const findAllVolunters = require("./findAllVolunteers");
+module.exports = { createVolunteer, findAllVolunters };

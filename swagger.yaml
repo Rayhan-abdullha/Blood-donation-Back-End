@@ -187,6 +187,12 @@ paths:
                       self:
                         type: string
                         example: "/volunteers"
+                      nextPage:
+                        type: string
+                        example: "/volunteers?page=2&limit=10&sortType=dsc&sortBy=donateCount"
+                      prevPage:
+                        type: string
+                        example: "/volunteers?page=1&limit=10&sortType=dsc&sortBy=donateCount"
                     required: [self]
         "400":
           $ref: "#/components/responses/400"

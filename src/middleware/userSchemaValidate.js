@@ -2,10 +2,8 @@ const { errors } = require("../utils");
 const { userSchema, loginSchema } = require("../validation/user");
 
 const registerSchemaValidate = async (req, res, next) => {
-  const cover = req.body.cover ?? "";
-  const { name, email, password } = req.body;
   const { error, value } = userSchema.validate(
-    { name, email, password, cover },
+    { ...req.body },
     { abortEarly: false }
   );
   if (error) {
@@ -22,9 +20,8 @@ const registerSchemaValidate = async (req, res, next) => {
 };
 
 const loginSchemaValidation = (req, res, next) => {
-  const { email, password } = req.body;
   const { error, value } = loginSchema.validate(
-    { email, password },
+    { ...req.body },
     { abortEarly: false }
   );
   if (error) {
