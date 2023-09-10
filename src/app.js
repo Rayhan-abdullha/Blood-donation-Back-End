@@ -10,6 +10,10 @@ applyMiddleWare(app);
 
 // Resources routes
 app.use(router.authRoutes);
+app.use(router.volunteerRoutes);
+app.use(router.bloodRoutes);
+app.use(router.inboxRoutes);
+app.use(router.campaignRoutes);
 
 app.get("/health", (_req, res, next) => {
   try {

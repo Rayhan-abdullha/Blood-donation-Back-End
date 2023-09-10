@@ -2,7 +2,7 @@ const { errors } = require("../utils");
 const { userSchema, loginSchema } = require("../validation/user");
 
 const registerSchemaValidate = async (req, res, next) => {
-  const cover = req.body.cover || " ";
+  const cover = req.body.cover ?? "";
   const { name, email, password } = req.body;
   const { error, value } = userSchema.validate(
     { name, email, password, cover },

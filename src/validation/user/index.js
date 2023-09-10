@@ -8,7 +8,7 @@ const userSchema = Joi.object({
     .email({ tlds: { allow: false } })
     .message("Invalid Email Format"),
   password: Joi.string().required().min(6).message("Password is too Short"),
-  cover: Joi.string(),
+  cover: Joi.string().optional(),
 });
 
 const loginSchema = Joi.object({

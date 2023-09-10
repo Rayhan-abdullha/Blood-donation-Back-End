@@ -193,11 +193,11 @@ paths:
         "500":
           $ref: "#/components/responses/500"
     post:
-      description: Create a new Volunteer
+      description: create a new user
       tags: [Volunteer]
       requestBody:
         content:
-          "application/josn":
+          "application/json":
             schema:
               $ref: "#/components/schemas/VolunteerData"
       responses:
@@ -210,7 +210,7 @@ paths:
                 properties:
                   code:
                     type: integer
-                    example: 200
+                    example: 201
                   message:
                     type: string
                     example: Volunteer request has been sent
@@ -390,7 +390,7 @@ paths:
       tags: [Blood]
       requestBody:
         content:
-          "application/josn":
+          "application/json":
             schema:
               type: object
               properties:
@@ -406,7 +406,7 @@ paths:
                 nationalID:
                   type: string
                   example: 6987451236548455
-                phoneNo:
+                phone:
                   type: string
                   example: 01798716196
                 patientInfo:
@@ -424,7 +424,7 @@ paths:
                       example: A+
                     phone:
                       type: string
-                      example: 0178716197
+                      example: 01798716197
                     nationalID:
                       type: string
                       example: 666676736876616
@@ -437,7 +437,7 @@ paths:
                     fatherName:
                       type: string
                       example: Mohiuddin Chowdhury
-                    MotherName:
+                    motherName:
                       type: string
                       example: Ghazala Chowdhury
                     cover:
@@ -456,13 +456,13 @@ paths:
                         dist:
                           type: string
                           example: Bhola
-                        upazilla:
+                        upazila:
                           type: string
                           example: charfassion
                         houseName:
                           type: string
                           example: "Mehjabin Vila"
-                      required: [country, division, dist, upazilla, houseName]
+                      required: [country, division, dist, upazila, houseName]
                   required:
                     [
                       name,
@@ -489,7 +489,7 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: Volunteer request has been sent
+                    example: Blood request has been sent
                   data:
                     allOf:
                       - type: object
@@ -802,9 +802,6 @@ components:
     VolunteerData:
       type: object
       properties:
-        _id:
-          type: string
-          example: "asdlfalsdfasf33aslf"
         age:
           type: integer
           format: int32
@@ -818,6 +815,9 @@ components:
         gender:
           type: string
           example: male
+        phone: 
+          type: string
+          example: 01798716196
         study:
           type: string
           example: honours 3rd year
@@ -828,26 +828,23 @@ components:
         address:
           type: object
           properties:
-            country:
-              type: string
-              example: Bangladesh
             division:
               type: string
               example: barishal
             dist:
               type: string
               example: Bhola
-            upazilla:
+            upazila:
+              type: string
+              example: Charfassion
+            streetAddress:
               type: string
               example: Charfassion
             currentAddress:
               type: string
-              example: Charfassion
-            parmanentAddress:
-              type: string
-              example: Charfassion
-          required: [country, division, dist, upazilla, parmanentAddress]
-        nationalId:
+              example: Dhaka
+          required: [division, dist, upazilla, currentAddress, streetAddress]
+        nationalIdNo:
           type: string
           example: 0983734826324
         bio:
