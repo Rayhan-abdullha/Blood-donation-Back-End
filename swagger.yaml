@@ -252,10 +252,18 @@ paths:
           $ref: "#/components/responses/401"
         "500":
           $ref: "#/components/responses/500"
-  "/volunteers/:id":
+  "/volunteers/{id}":
     get:
       description: Get a Single Volunteer
       tags: [Volunteer]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: volunteer ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
       responses:
         "200":
           description: Return a Single Volunteer
@@ -531,10 +539,18 @@ paths:
           $ref: "#/components/responses/401"
         "500":
           $ref: "#/components/responses/500"
-  "/bloods/:id":
+  "/bloods/{id}":
     get:
       description: Get a Single Blood Request
       tags: [Blood]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: volunteer ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
       responses:
         "200":
           description: Return a Single Blood Request
@@ -658,7 +674,7 @@ paths:
                         example: message is required!
         "500":
           $ref: "#/components/responses/500"
-  "/inboxes/:userId/messages":
+  "/inboxes/{userId}/messages":
     get:
       description: Get all message for an users
       tags: [Inbox]
@@ -705,7 +721,7 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-  "/dashboard/bloods/:id":
+  "/dashboard/bloods/{id}":
     patch:
       description: Update a Single Blood Request
       tags: [Dashboard]

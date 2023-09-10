@@ -9,4 +9,8 @@ router
   )
   .get(volunteerController.findAllVolunters);
 
+router
+  .route("/api/v1/volunteers/:id")
+  .get(volunteerController.findSingleVolunteer);
+
 module.exports = router;

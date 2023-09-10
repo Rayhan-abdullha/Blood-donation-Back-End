@@ -55,12 +55,22 @@ const findAll = async ({
   return data;
 };
 
+const findSingle = async (id) => {
+  const volunteer = await Volunteer.findById(id).populate({
+    path: "author",
+    select: ["name", "role"],
+  });
+  return {
+    ...volunteer._doc,
+    id: volunteer.id,
+  };
+};
 const count = async () => {
   return await Volunteer.count();
 };
-
 module.exports = {
   volunteerRequest,
   findAll,
   count,
+  findSingle,
 };
