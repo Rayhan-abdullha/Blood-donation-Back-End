@@ -1,6 +1,4 @@
 const searvice = require("../../../../lib/volunteer");
-const Volunteer = require("../../../../models/Volunteer");
-
 const createVolunteer = async (req, res, next) => {
   const cover = req.body.cover ?? "";
   const study = req.body.study ?? "";
@@ -21,10 +19,25 @@ const createVolunteer = async (req, res, next) => {
       bio,
       nationalIdNo,
     });
-    console.log("requested");
-    return res.status(201).json(volunteer);
+
+    const response = {
+      code: 201,
+      message: "Volunteer request has been sent",
+      data: {
+        id: volunteer.id,
+        name: volunteer?.author?.name ?? "coder",
+        status: volunteer.status,
+        createdAt: volunteer.createdAt,
+        updatedAt: volunteer.updatedAt,
+      },
+      links: {
+        self: `/volunteer/${volunteer.id}`,
+        delete: `/volunteer/${volunteer.id}`,
+      },
+    };
+    return res.status(201).json(response);
   } catch (err) {
-    return res.status(400).json("error volunteer");
+    next(err);
   }
 };
 

@@ -39,8 +39,8 @@ const volunteerSchema = new Schema(
       type: String,
     },
     status: {
-      type: [String],
-      enum: ["pending", "decline", "approve"],
+      type: String,
+      enum: ["pending", "decline", "approve", "block"],
       default: "pending",
     },
     address: {

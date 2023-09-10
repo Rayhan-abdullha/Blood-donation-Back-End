@@ -1,8 +1,14 @@
 const { handleValidationError } = require("./handleValidationError");
 
 const globalErrorHandler = (err, _req, res, _next) => {
-  let code = 500;
-  let message = "Internal Server Error";
+  if (err.status === 500) {
+    return res.status(err.status).json({
+      code: err.status,
+      message: "Internal Server Error",
+    });
+  }
+  let code;
+  let message;
   let errorMessages = [];
 
   // if (err?.name === "ValidationError") {
@@ -19,7 +25,7 @@ const globalErrorHandler = (err, _req, res, _next) => {
   //   errorMessages = err?.message ? [{ field: "", message: err.message }] : [];
   // }
 
-  res.status(err.status).json({
+  return res.status(err.status).json({
     code: err.status,
     message: err.message,
     errorMessages,

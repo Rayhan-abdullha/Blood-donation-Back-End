@@ -238,9 +238,6 @@ paths:
                       delete:
                         type: string
                         example: "/volunteers/asldfasldf23423947"
-                      edit:
-                        type: string
-                        example: "/volunteers/asldfasldf23423947"
                     required: [self, delete, edit]
                 required: [code, message, data, links]
         "400":
