@@ -1,3 +1,4 @@
 const createBloodRequest = require("./createBlood");
+const findAllBloodRequest = require("./findAllBloodRequest");
 
-module.exports = { createBloodRequest };
+module.exports = { createBloodRequest, findAllBloodRequest };

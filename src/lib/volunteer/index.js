@@ -1,5 +1,10 @@
 const Volunteer = require("../../models/Volunteer");
 const User = require("../../models/User");
+const {
+  notFound,
+  authorizetionError,
+  BadRequest,
+} = require("../../utils/errors");
 
 const volunteerRequest = async ({
   occupation,
@@ -56,6 +61,9 @@ const findAll = async ({
 };
 
 const findSingle = async (id) => {
+  if (!id) {
+    throw notFound("Id not Found");
+  }
   const volunteer = await Volunteer.findById(id).populate({
     path: "author",
     select: ["name", "role"],
@@ -65,6 +73,23 @@ const findSingle = async (id) => {
     id: volunteer.id,
   };
 };
+
+const deleteVolunteer = async (id) => {
+  if (!id) {
+    throw BadRequest("Id is Required");
+  }
+  const volunteer = await Volunteer.findById(id);
+
+  if (!volunteer) {
+    throw BadRequest("Bad Request");
+  }
+
+  if (volunteer.status !== "pending") {
+    throw authorizetionError();
+  }
+  return await Volunteer.findByIdAndDelete(id);
+};
+
 const count = async () => {
   return await Volunteer.count();
 };
@@ -73,4 +98,5 @@ module.exports = {
   findAll,
   count,
   findSingle,
+  deleteVolunteer,
 };

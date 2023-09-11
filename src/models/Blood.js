@@ -31,7 +31,7 @@ const bloodSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "decline", "done", "in progress"],
+      enum: ["pending", "decline", "done", "in-progress"],
       default: "pending",
     },
     patientInfo: {

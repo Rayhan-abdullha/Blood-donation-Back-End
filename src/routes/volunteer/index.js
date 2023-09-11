@@ -11,6 +11,7 @@ router
 
 router
   .route("/api/v1/volunteers/:id")
-  .get(volunteerController.findSingleVolunteer);
+  .get(volunteerController.findSingleVolunteer)
+  .delete(volunteerController.deleteVolunterRequest);
 
 module.exports = router;

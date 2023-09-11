@@ -329,6 +329,14 @@ paths:
     delete:
       description: Delete a Volunteer Requests
       tags: [Volunteer]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: volunteer ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
       responses:
         "204":
           $ref: "#/components/responses/204"
