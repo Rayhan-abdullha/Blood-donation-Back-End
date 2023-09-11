@@ -1,4 +1,5 @@
 const Volunteer = require("../../models/Volunteer");
+const { errors } = require("../../utils");
 const User = require("../../models/User");
 const {
   notFound,
@@ -76,16 +77,16 @@ const findSingle = async (id) => {
 
 const deleteVolunteer = async (id) => {
   if (!id) {
-    throw BadRequest("Id is Required");
+    throw errors.BadRequest("Id is Required");
   }
   const volunteer = await Volunteer.findById(id);
 
   if (!volunteer) {
-    throw BadRequest("Bad Request");
+    throw errors.BadRequest("Bad Request");
   }
 
   if (volunteer.status !== "pending") {
-    throw authorizetionError();
+    throw errors.authorizetionError();
   }
   return await Volunteer.findByIdAndDelete(id);
 };

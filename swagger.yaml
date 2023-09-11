@@ -555,7 +555,7 @@ paths:
         - in: path
           name: id
           required: true
-          description: volunteer ID
+          description: Blood ID
           schema:
             type: string
             example: 'sldflasdfladfadf'
@@ -599,6 +599,14 @@ paths:
     delete:
       description: Delete a Blood Request
       tags: [Blood]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Blood ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
       responses:
         "204":
           $ref: "#/components/responses/204"
@@ -608,6 +616,62 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
+  "/users/{id}/bloods":
+    get:
+      description: Get all Bloods Request By User ID
+      tags: [Blood]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
+      responses:
+        "200":
+          description: Return a Users Blood Request
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  data:
+                    allOf:
+                      - type: object
+                        properties:
+                          id:
+                            type: string
+                            example: aas899cn2afadhfaskf
+                          patientName:
+                            type: string
+                            example: Karima
+                          title:
+                            type: string
+                            example: I need one bag blood
+                          body:
+                            type: string
+                            example: please help me, i need blood for my sister.
+                          bloodGroup:
+                            type: string
+                            example: O+
+                          status:
+                            type: string
+                            example: done
+                        required: [id, name, bloodGroup, status]
+                      - $ref: "#/components/schemas/Timestamp"
+                  links:
+                    type: string
+                    example: "/bloods/asdlfalsdfasf33aslf"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+    
   "/inboxes":
     post:
       description: Send a Messsage to Admin

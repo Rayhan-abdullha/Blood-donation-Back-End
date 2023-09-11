@@ -1,5 +1,7 @@
 const Blood = require("../../models/Blood");
 
+const { errors } = require("../../utils");
+
 const createBlood = async ({
   title,
   body,
@@ -46,6 +48,30 @@ const findAll = async ({
   return bloods;
 };
 
+const deleteBlood = async (id) => {
+  if (!id) {
+    throw errors.BadRequest("Id is Required");
+  }
+  const blood = await Blood.findById(id);
+
+  if (!blood) {
+    throw errors.BadRequest("Bad Request");
+  }
+
+  if (blood.status !== "pending") {
+    throw errors.authorizetionError();
+  }
+  return await Blood.findByIdAndDelete(id);
+};
+
+const findBloodsByUserId = async (id) => {
+  if (!id) {
+    throw errors.BadRequest("Id is Required");
+  }
+  const bloods = await Blood.find({ author: id });
+  return bloods;
+};
+
 const count = async () => {
   return await Blood.count();
 };
@@ -54,4 +80,6 @@ module.exports = {
   createBlood,
   findAll,
   count,
+  deleteBlood,
+  findBloodsByUserId,
 };
