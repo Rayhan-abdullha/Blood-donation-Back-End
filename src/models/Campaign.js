@@ -4,25 +4,25 @@ const campaignSchema = new Schema(
   {
     title: {
       type: String,
-      minLength: [6, "Message is to Short"],
+      minLength: [6, "Title is too Short"],
       required: true,
     },
     description: {
       type: String,
-      minLength: [15, "body is to Short"],
+      minLength: [10, "Description is too Short"],
       required: true,
     },
     status: {
       type: String,
-      enum: ["in-progress", "done", "pending"],
-      default: "pending",
+      enum: ["in-progress", "completed", "draft"],
+      default: "draft",
     },
     startDate: {
-      type: Date,
+      type: String,
       required: true,
     },
     endDate: {
-      type: Date,
+      type: String,
       required: true,
     },
   },
