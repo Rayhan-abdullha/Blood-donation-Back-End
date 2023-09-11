@@ -671,7 +671,7 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-    
+
   "/inboxes":
     post:
       description: Send a Messsage to Admin
@@ -746,13 +746,21 @@ paths:
                         example: message is required!
         "500":
           $ref: "#/components/responses/500"
-  "/inboxes/{userId}/messages":
+  "/users/{id}/inboxes":
     get:
       description: Get all message for an users
       tags: [Inbox]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
       responses:
         "200":
-          description: Retruns a list of volunteers
+          description: Retruns all messages for an users
           content:
             "application/json":
               schema:
