@@ -2,15 +2,14 @@ const Joi = require("joi");
 
 const volunteerSchema = Joi.object({
   bloodGroup: Joi.string().required(),
-  bio: Joi.string().optional(),
   occupation: Joi.string()
     .valid("student", "jobholder", "worker", "housemaker")
     .required(),
   age: Joi.number().required(),
   phone: Joi.number().required(),
   gender: Joi.string().valid("male", "female", "other").required(),
-  study: Joi.string().optional(),
-  cover: Joi.string().optional(),
+  study: Joi.string().min(0),
+  cover: Joi.string().min(0),
   address: Joi.object({
     division: Joi.string().required(),
     dist: Joi.string().required(),
@@ -18,7 +17,8 @@ const volunteerSchema = Joi.object({
     streetAddress: Joi.string().required(),
     currentAddress: Joi.string().required(),
   }),
-  nationalIdNo: Joi.string().optional(),
+  bio: Joi.string().min(0),
+  nationalIdNo: Joi.string().min(0),
 });
 
 module.exports = { volunteerSchema };

@@ -1,37 +1,57 @@
 const Blood = require("../../models/Blood");
-
+const defaults = require("../../config");
 const { errors } = require("../../utils");
+const { findUserByID } = require("../user");
+const {
+  notFound,
+  BadRequest,
+  authorizetionError,
+} = require("../../utils/errors");
+const User = require("../../models/User");
 
 const createBlood = async ({
   title,
   body,
+  author,
   nationalID,
   place,
   phone,
   patientInfo,
 }) => {
-  console.log({ title, body, nationalID, place, phone, patientInfo });
   const blood = new Blood({
     title,
+    author: author.id,
     body,
     nationalID,
     place,
     phone,
     patientInfo,
   });
+
+  const user = await findUserByID(blood?.author);
+  if (!user) {
+    throw authorizetionError();
+  }
+  user.blood.push(blood._doc._id);
   await blood.save();
-  return { ...blood._doc, id: blood.id };
+  await user.save();
+
+  return {
+    ...blood._doc,
+    id: blood.id,
+    author: { id: user.id, name: user.name },
+  };
 };
 
 const findAll = async ({
-  page,
-  limit,
-  sortType = "",
-  sortBy = "",
-  search = "",
+  page = defaults.page,
+  limit = defaults.limit,
+  sortType = defaults.sortType,
+  sortBy = defaults.sortBy,
+  search = defaults.search,
 }) => {
   const sortStr = `${sortType === "dsc" ? "-" : ""}${sortBy}`;
-  const bloods = await Blood.find({ status: { $eq: "pending" } })
+  let bloods = await Blood.find({ status: { $eq: "pending" } })
     .populate({
       path: "author",
       select: "name",
@@ -40,15 +60,15 @@ const findAll = async ({
     .skip(page * limit - limit)
     .limit(limit);
 
-  // const data = bloods.filter((item) => {
-  //   if (item.author.name.includes(search)) {
-  //     return item;
-  //   }
-  // });
-  return bloods;
+  bloods = bloods.filter((item) => {
+    if (item?.author?.name?.includes(search)) {
+      return item._doc;
+    }
+  });
+  return { data: bloods, count: bloods.length };
 };
 
-const deleteBlood = async (id) => {
+const deleteBlood = async ({ id, user = {} }) => {
   if (!id) {
     throw errors.BadRequest("Id is Required");
   }
@@ -57,29 +77,100 @@ const deleteBlood = async (id) => {
   if (!blood) {
     throw errors.BadRequest("Bad Request");
   }
+  let finduser = await User.findById(blood.author.toString());
+  let bloods = finduser?.blood?.filter((item) => item.toString() !== id);
+  finduser.blood = [...bloods];
 
-  if (blood.status !== "pending") {
+  if (user?.role?.includes("admin")) {
+    await Blood.findByIdAndDelete(id);
+    return await finduser.save();
+  } else if (blood.status !== "pending") {
     throw errors.authorizetionError();
   }
-  return await Blood.findByIdAndDelete(id);
+  await Blood.findByIdAndDelete(id);
+  await finduser.save();
+  return;
 };
 
-const findBloodsByUserId = async (id) => {
+const findBloodsByUserId = async ({ id, path }) => {
   if (!id) {
     throw errors.BadRequest("Id is Required");
   }
   const bloods = await Blood.find({ author: id });
-  return bloods;
+
+  if (bloods.length === 0) {
+    throw notFound("Empty Blood Request List");
+  }
+
+  const data = bloods.map((item) => {
+    item = item._doc;
+    return {
+      id: item._id,
+      patientName: item.patientInfo.name,
+      title: item.title,
+      body: item.body,
+      bloodGroup: item.bloodGroup,
+      status: item.status,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      link: `/bloods/${item._id}`,
+    };
+  });
+  return data;
 };
 
-const count = async () => {
-  return await Blood.count();
+const checkOwnerShip = async ({ resourceId = "", user, userId = "" }) => {
+  try {
+    if (user?.role.includes("admin")) {
+      return true;
+    }
+
+    if (userId) {
+      if (userId === user?.id) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    if (resourceId) {
+      const blood = await Blood.findById(resourceId);
+      if (!blood) {
+        return notFound();
+      }
+
+      if (blood._doc?.author.toString() === user?.id) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  } catch (err) {
+    return BadRequest();
+  }
+};
+
+const count = async ({ search }) => {
+  let bloods = await Blood.find({
+    status: { $eq: "pending" },
+  }).populate({
+    path: "author",
+    select: "name",
+  });
+
+  const data = bloods.filter((item) => {
+    if (item.author.name.includes(search)) {
+      return item._doc;
+    }
+  });
+  return data.length;
 };
 
 module.exports = {
   createBlood,
   findAll,
-  count,
   deleteBlood,
+  count,
   findBloodsByUserId,
+  checkOwnerShip,
 };

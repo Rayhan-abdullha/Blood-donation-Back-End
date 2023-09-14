@@ -3,7 +3,8 @@ const { Schema, model } = require("mongoose");
 const bloodSchema = new Schema(
   {
     author: {
-      type: String,
+      type: Schema.ObjectId,
+      ref: "User",
     },
     title: {
       type: String,

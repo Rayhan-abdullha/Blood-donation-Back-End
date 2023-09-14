@@ -1,15 +1,37 @@
 const router = require("express").Router();
 const { controller: bloodController } = require("../../app/v1/blood");
-const { bloodSchema } = require("../../middleware");
+const {
+  bloodSchema,
+  authenticate,
+  authorization,
+  ownerShip,
+} = require("../../middleware");
 
 router
   .route("/api/v1/bloods")
-  .post(bloodSchema.requestBloodValidation, bloodController.createBloodRequest)
+  .post(
+    authenticate,
+    authorization(["user", "admin"]),
+    bloodSchema.requestBloodValidation,
+    bloodController.createBloodRequest
+  )
   .get(bloodController.findAllBloodRequest);
 
-router.route("/api/v1/bloods/:id").delete(bloodController.deleteBloodRequest);
+router
+  .route("/api/v1/bloods/:id")
+  .delete(
+    authenticate,
+    authorization(["user", "admin"]),
+    ownerShip("Blood"),
+    bloodController.deleteBloodRequest
+  );
 router
   .route("/api/v1/users/:userId/bloods")
-  .get(bloodController.findUserBloods);
+  .get(
+    authenticate,
+    authorization(["user", "admin"]),
+    ownerShip("Blood"),
+    bloodController.findUserBloods
+  );
 
 module.exports = router;

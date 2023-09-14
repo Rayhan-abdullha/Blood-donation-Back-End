@@ -5,6 +5,11 @@ const findUserByEmail = async (email) => {
   return user ? user : false;
 };
 
+const findUserByID = async (id) => {
+  const user = await User.findById(id);
+  return user ? user : false;
+};
+
 const existUser = async (email) => {
   const user = await findUserByEmail(email);
   return user ? true : false;
@@ -19,4 +24,5 @@ module.exports = {
   findUserByEmail,
   existUser,
   createUser,
+  findUserByID,
 };

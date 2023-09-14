@@ -14,14 +14,14 @@ const findAllVoulneers = async (req, res, next) => {
       sortBy,
       sortType,
       search,
+      admin: req.admin,
     });
-    volunteers = volunteers.map((item) => {
-      return {
-        ...item._doc,
-        link: `/volunteers/${item.id}`,
-      };
+
+    const totalItems = await volunteerSearvice.count({
+      search,
+      admin: req.admin,
     });
-    const totalItems = await volunteerSearvice.count();
+    console.log(totalItems);
     const totalPages = Math.ceil(totalItems / limit);
 
     const pagination = {
@@ -39,7 +39,7 @@ const findAllVoulneers = async (req, res, next) => {
     }
 
     const links = {
-      self: "/volunteers",
+      self: `${req.url}`,
     };
     if (pagination.prevPage) {
       const qs = query.generateQueryString({

@@ -34,9 +34,11 @@ const userSchema = new Schema(
     cover: {
       type: String,
     },
+    blood: [{ type: Schema.ObjectId, ref: "Blood" }],
     volunteer: {
       type: Schema.ObjectId,
       ref: "Volunteer",
+      default: null,
     },
     inbox: [{ type: Schema.ObjectId, ref: "Inbox" }],
   },

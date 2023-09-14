@@ -2,7 +2,10 @@ const volunteerSeavice = require("../../../../lib/volunteer");
 const findSingleVolunteer = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const volunteer = await volunteerSeavice.findSingle(id);
+    const volunteer = await volunteerSeavice.findSingle({
+      id,
+      admin: req.admin,
+    });
     const response = {
       code: 200,
       data: {

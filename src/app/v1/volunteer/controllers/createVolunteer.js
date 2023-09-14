@@ -8,6 +8,7 @@ const createVolunteer = async (req, res, next) => {
 
   try {
     const volunteer = await searvice.volunteerRequest({
+      author: req?.user,
       occupation,
       age,
       gender,
@@ -29,10 +30,11 @@ const createVolunteer = async (req, res, next) => {
         status: volunteer.status,
         createdAt: volunteer.createdAt,
         updatedAt: volunteer.updatedAt,
+        link: `/volunteers/${volunteer.id}`,
       },
       links: {
-        self: `/volunteer/${volunteer.id}`,
-        delete: `/volunteer/${volunteer.id}`,
+        self: `${req.path}${volunteer.id}`,
+        delete: `${req.path}${volunteer.id}`,
       },
     };
     return res.status(201).json(response);

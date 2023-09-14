@@ -1,11 +1,13 @@
+const defaults = require("../../../../config");
 const bloodSearvices = require("../../../../lib/blood");
-const query = require("../../../../utils");
+const { query } = require("../../../../utils");
+const bloodUtils = require("../utils");
 const findAllBloodRequest = async (req, res, next) => {
-  const page = +req.query.page || 1;
-  const limit = +req.query.limit || 10;
-  const sortType = req.query.sortType || "dsc";
-  const sortBy = req.query.sortBy || "updatedAt";
-  const search = req.query.search || "";
+  const page = +req.query.page || defaults.page;
+  const limit = +req.query.limit || defaults.limit;
+  const sortType = req.query.sortType || defaults.sortType;
+  const sortBy = req.query.sortBy || defaults.sortBy;
+  const search = req.query.search || defaults.search;
 
   try {
     let bloods = await bloodSearvices.findAll({
@@ -15,50 +17,32 @@ const findAllBloodRequest = async (req, res, next) => {
       sortType,
       search,
     });
-    console.log("length: ", bloods.length);
-    bloods = bloods.map((item) => {
-      return {
-        ...item._doc,
-        link: `/bloods/${item.id}`,
-      };
-    });
-    const totalItems = await bloodSearvices.count();
-    const totalPages = Math.ceil(totalItems / limit);
-    console.log(totalItems);
-    const pagination = {
-      page,
-      limit,
-      totalPages,
+
+    const totalItems = await bloodSearvices.count({ search });
+    const pagination = query.getPagination({
       totalItems,
-    };
-    if (page < totalPages) {
-      pagination.nextPage = page + 1;
-    }
+      limit,
+      page,
+    });
 
-    if (page > totalPages || page !== 1) {
-      pagination.prevPage = page - 1;
-    }
+    // HATOAS Link
+    const links = query.getHateOasForAllItems({
+      url: req.url,
+      path: req.path,
+      query: req.query,
+      hasNext: !!pagination.next,
+      hasPrev: !!pagination.prev,
+    });
 
-    const links = {
-      self: "/bloods",
-    };
-    if (pagination.prevPage) {
-      const qs = query.generateQueryString({
-        queryParams: req.query,
-        page: page - 1,
-      });
-      links.prevPage = `${req.path}?${qs}`;
-    }
-    if (pagination.nextPage) {
-      const qs = query.generateQueryString({
-        queryParams: req.query,
-        page: page + 1,
-      });
-      links.nextPage = `${req.path}?${qs}`;
-    }
+    // data transformation
+    const finalData = bloodUtils.getTrasformData({
+      item: bloods.data,
+      path: req.path,
+    });
+
     const response = {
       code: 200,
-      data: bloods,
+      data: finalData,
       pagination,
       links,
     };

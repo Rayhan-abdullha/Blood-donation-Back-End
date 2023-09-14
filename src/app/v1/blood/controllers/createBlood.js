@@ -10,6 +10,7 @@ const createBloodRequest = async (req, res, next) => {
   try {
     const blood = await bloodSearvices.createBlood({
       title,
+      author: req?.user,
       body,
       nationalID,
       place,
@@ -21,9 +22,31 @@ const createBloodRequest = async (req, res, next) => {
       },
     });
 
-    res.status(201).json(blood);
+    const response = {
+      code: 201,
+      message: "Blood Request has been sent",
+      data: {
+        id: blood?.id,
+        title: blood?.title,
+        body: blood?.body,
+        author: blood?.author,
+        patientName: blood?.patientInfo?.name,
+        place: blood?.place,
+        status: blood?.status,
+        createdAt: blood?.createdAt,
+        updatedAt: blood?.updatedAt,
+        link: `${req.url}/${blood?.id}`,
+      },
+      links: {
+        self: `${req.url}`,
+        delete: `${req.url}/${blood?.id}}`,
+        view: `${req.url}`,
+      },
+    };
+
+    return res.status(201).json(response);
   } catch (err) {
-    res.status(400).json(err);
+    return res.status(err.status || 400).json(err.message);
   }
 };
 module.exports = createBloodRequest;

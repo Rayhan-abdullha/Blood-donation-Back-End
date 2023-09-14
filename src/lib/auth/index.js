@@ -5,6 +5,7 @@ const { createUser } = require("../../lib/user");
 const { BadRequest } = require("../../utils/errors");
 const { generateToken } = require("../token");
 
+// register searvice
 const createAccount = async ({ name, email, password, cover = "" }) => {
   if (!name || !email || !password) {
     throw errors.BadRequest();
@@ -20,6 +21,7 @@ const createAccount = async ({ name, email, password, cover = "" }) => {
   return user;
 };
 
+// login searvice
 const loginUser = async ({ email, password }) => {
   const hasUser = await findUserByEmail(email);
   if (!hasUser) {

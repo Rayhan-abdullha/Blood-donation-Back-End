@@ -3,7 +3,6 @@ const { generateToken } = require("../../../../lib/token");
 
 const register = async (req, res, next) => {
   const cover = req.cover ?? "";
-  console.log(cover);
   const { name, email, password } = req.data;
   try {
     const user = await createAccount({ name, email, password, cover });
@@ -30,7 +29,7 @@ const register = async (req, res, next) => {
         signin: "/auth/signin",
       },
     };
-    res.status(201).json(response);
+    return res.status(201).json(response);
   } catch (err) {
     next(err);
   }

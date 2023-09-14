@@ -40,7 +40,7 @@ const volunteerSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "decline", "approve", "block"],
+      enum: ["pending", "volunteer", "block"],
       default: "pending",
     },
     address: {
@@ -72,10 +72,6 @@ const volunteerSchema = new Schema(
     donateCount: {
       type: Number,
       default: 0,
-    },
-    reviews: {
-      type: Schema.ObjectId,
-      ref: "review",
     },
     age: {
       type: String,

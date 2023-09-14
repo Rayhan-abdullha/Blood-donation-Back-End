@@ -138,6 +138,8 @@ paths:
           $ref: "#/components/responses/500"
   "/volunteers":
     get:
+      security:
+        - bearerAuth: []
       tags: [Volunteer]
       description: List of volunteers
       parameters:
@@ -199,6 +201,8 @@ paths:
         "500":
           $ref: "#/components/responses/500"
     post:
+      security:
+        - bearerAuth: []
       description: create a new user
       tags: [Volunteer]
       requestBody:
@@ -254,6 +258,8 @@ paths:
           $ref: "#/components/responses/500"
   "/volunteers/{id}":
     get:
+      security:
+        - bearerAuth: []
       description: Get a Single Volunteer
       tags: [Volunteer]
       parameters:
@@ -287,46 +293,9 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-    patch:
-      description: Update a Single Volunteer
-      tags: [Volunteer]
-      requestBody:
-        content:
-          "application/josn":
-            schema:
-              allOf:
-                - $ref: "#/components/schemas/VolunteerData"
-      responses:
-        "200":
-          description: Retruns a Upadated volunteer data
-          content:
-            "application/json":
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Updated Successfull
-                  data:
-                    $ref: "#/components/schemas/VolunteerData"
-                  links:
-                    type: object
-                    properties:
-                      self:
-                        type: string
-                        example: "/volunteers/asdlfalsdfasf33aslf"
-        "400":
-          $ref: "#/components/responses/400"
-        "401":
-          $ref: "#/components/responses/401"
-        "404":
-          $ref: "#/components/responses/404"
-        "500":
-          $ref: "#/components/responses/500"
     delete:
+      security:
+        - bearerAuth: []
       description: Delete a Volunteer Requests
       tags: [Volunteer]
       parameters:
@@ -340,6 +309,69 @@ paths:
       responses:
         "204":
           $ref: "#/components/responses/204"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/volunteers/{id}/status":
+    patch:
+      security:
+        - bearerAuth: []
+      description: Update a Single Volunteer Status
+      tags: [Volunteer]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: volunteer ID
+          schema:
+            type: string
+            example: '6503308cd64533c41dd94d3f'
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: volunteer
+              required: [status]
+      responses:
+        "200":
+          description: Retruns a Upadated volunteer data
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Updated Volunteer
+                  data:
+                    allOf:
+                      - type: object
+                        properties:
+                          id: 
+                            type: string
+                            example: 650314f55b911c059f2c9123
+                          status:
+                            type: string
+                            example: volunteer
+                      - $ref: "#/components/schemas/Timestamp"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/volunteers/asdlfalsdfasf33aslf/status"
+        "400":
+          $ref: "#/components/responses/400"
         "401":
           $ref: "#/components/responses/401"
         "404":
@@ -405,6 +437,8 @@ paths:
         "500":
           $ref: "#/components/responses/500"
     post:
+      security:
+        - bearerAuth: []
       description: Create a Blood Request
       tags: [Blood]
       requestBody:
@@ -549,6 +583,8 @@ paths:
           $ref: "#/components/responses/500"
   "/bloods/{id}":
     get:
+      security:
+        - bearerAuth: []
       description: Get a Single Blood Request
       tags: [Blood]
       parameters:
@@ -597,6 +633,8 @@ paths:
         "500":
           $ref: "#/components/responses/500"
     delete:
+      security:
+        - bearerAuth: []
       description: Delete a Blood Request
       tags: [Blood]
       parameters:
@@ -618,6 +656,8 @@ paths:
           $ref: "#/components/responses/500"
   "/users/{id}/bloods":
     get:
+      security:
+        - bearerAuth: []
       description: Get all Bloods Request By User ID
       tags: [Blood]
       parameters:
@@ -674,6 +714,8 @@ paths:
 
   "/inboxes":
     post:
+      security:
+        - bearerAuth: []
       description: Send a Messsage to Admin
       tags: [Inbox]
       requestBody:
@@ -748,6 +790,8 @@ paths:
           $ref: "#/components/responses/500"
   "/users/{id}/inboxes":
     get:
+      security:
+        - bearerAuth: []
       description: Get all message for an users
       tags: [Inbox]
       parameters:
@@ -803,6 +847,8 @@ paths:
           $ref: "#/components/responses/500"
   "/dashboard/bloods/{id}":
     patch:
+      security:
+        - bearerAuth: []
       description: Update a Single Blood Request
       tags: [Dashboard]
       requestBody:
