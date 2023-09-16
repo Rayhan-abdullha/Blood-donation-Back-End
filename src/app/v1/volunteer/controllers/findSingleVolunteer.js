@@ -15,6 +15,7 @@ const findSingleVolunteer = async (req, res, next) => {
         status: volunteer.status,
         bloodGroup: volunteer.bloodGroup,
         gender: volunteer.gender,
+        donateCount: volunteer.donateCount,
         study: volunteer.study,
         cover: volunteer.cover,
         address: volunteer.address,

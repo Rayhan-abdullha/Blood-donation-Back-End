@@ -7,8 +7,17 @@ const inboxSchema = new Schema(
       ref: "User",
     },
     message: {
-      type: String,
-      minLength: [6, "Message is to Short"],
+      type: {
+        msg: {
+          type: String,
+          minLength: [2, "Message is to Short"],
+          required: true,
+        },
+        reply: {
+          type: [String],
+          minLength: [2, "reply is to Short"],
+        },
+      },
       required: true,
     },
     status: {

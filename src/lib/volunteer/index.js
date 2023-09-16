@@ -67,6 +67,7 @@ const findAll = async ({
       name: item.author.name,
       cover: item.cover,
       status: item.status,
+      donateCount: item.donateCount,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
       link: `${path}/${item.id}`,

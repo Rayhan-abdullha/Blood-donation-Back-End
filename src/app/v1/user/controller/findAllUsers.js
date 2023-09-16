@@ -1,24 +1,25 @@
+const userSearvices = require("../../../../lib/user");
 const defaults = require("../../../../config");
-const bloodSearvices = require("../../../../lib/blood");
 const { query } = require("../../../../utils");
-const bloodUtils = require("../utils");
-const findAllBloodRequest = async (req, res, next) => {
+const usersUtils = require("../utils");
+
+const findAllUsers = async (req, res, next) => {
   const page = +req.query.page || defaults.page;
   const limit = +req.query.limit || defaults.limit;
   const sortType = req.query.sortType || defaults.sortType;
   const sortBy = req.query.sortBy || defaults.sortBy;
   const search = req.query.search || defaults.search;
-
   try {
-    let bloods = await bloodSearvices.findAll({
+    const users = await userSearvices.findUsers({
+      admin: req.admin,
       page,
       limit,
-      sortBy,
       sortType,
+      sortBy,
       search,
     });
 
-    const totalItems = await bloodSearvices.count({ search });
+    const totalItems = await userSearvices.count({ search });
     const pagination = query.getPagination({
       totalItems,
       limit,
@@ -35,11 +36,10 @@ const findAllBloodRequest = async (req, res, next) => {
     });
 
     // data transformation
-    const finalData = bloodUtils.getTrasformData({
-      item: bloods.data,
+    const finalData = usersUtils.getTransFormData({
+      data: users,
       path: req.path,
     });
-
     const response = {
       code: 200,
       data: finalData,
@@ -52,4 +52,4 @@ const findAllBloodRequest = async (req, res, next) => {
   }
 };
 
-module.exports = findAllBloodRequest;
+module.exports = findAllUsers;

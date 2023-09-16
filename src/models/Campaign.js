@@ -7,10 +7,20 @@ const campaignSchema = new Schema(
       minLength: [6, "Title is too Short"],
       required: true,
     },
-    description: {
+    body: {
       type: String,
       minLength: [10, "Description is too Short"],
       required: true,
+    },
+    open: {
+      type: String,
+      minLength: [3, "Open is too Short"],
+      minLength: [5, "Open is too Long"],
+    },
+    close: {
+      type: String,
+      minLength: [3, "Open is too Short"],
+      minLength: [5, "Open is too Long"],
     },
     status: {
       type: String,

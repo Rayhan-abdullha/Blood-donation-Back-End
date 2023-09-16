@@ -18,6 +18,7 @@ app.use(router.volunteerRoutes);
 app.use(router.bloodRoutes);
 app.use(router.inboxRoutes);
 app.use(router.campaignRoutes);
+app.use(router.userRoutes);
 
 app.get("/health", async (_req, res, next) => {
   try {

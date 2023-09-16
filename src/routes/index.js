@@ -3,6 +3,7 @@ const volunteerRoutes = require("./volunteer");
 const bloodRoutes = require("./blood");
 const inboxRoutes = require("./inbox");
 const campaignRoutes = require("./campaign");
+const userRoutes = require("./users");
 
 module.exports = {
   authRoutes,
@@ -10,4 +11,5 @@ module.exports = {
   bloodRoutes,
   inboxRoutes,
   campaignRoutes,
+  userRoutes,
 };
