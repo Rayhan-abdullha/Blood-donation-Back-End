@@ -2,11 +2,7 @@ const Blood = require("../../models/Blood");
 const defaults = require("../../config");
 const { errors } = require("../../utils");
 const { findUserByID } = require("../user");
-const {
-  notFound,
-  BadRequest,
-  authorizetionError,
-} = require("../../utils/errors");
+
 const User = require("../../models/User");
 
 const createBlood = async ({
@@ -30,7 +26,7 @@ const createBlood = async ({
 
   const user = await findUserByID(blood?.author);
   if (!user) {
-    throw authorizetionError();
+    throw errors.authorizetionError();
   }
   user.blood.push(blood._doc._id);
   await blood.save();
@@ -75,7 +71,7 @@ const deleteBlood = async ({ id, user = {} }) => {
   const blood = await Blood.findById(id);
 
   if (!blood) {
-    throw errors.BadRequest("Bad Request");
+    throw errors.notFound();
   }
   let finduser = await User.findById(blood.author.toString());
   let bloods = finduser?.blood?.filter((item) => item.toString() !== id);
@@ -99,7 +95,7 @@ const findBloodsByUserId = async ({ id, path }) => {
   const bloods = await Blood.find({ author: id });
 
   if (bloods.length === 0) {
-    throw notFound("Empty Blood Request List");
+    throw errors.notFound("Empty Blood Request List");
   }
 
   const data = bloods.map((item) => {
@@ -136,7 +132,7 @@ const checkOwnerShip = async ({ resourceId = "", user, userId = "" }) => {
     if (resourceId) {
       const blood = await Blood.findById(resourceId);
       if (!blood) {
-        return notFound();
+        return errors.notFound();
       }
 
       if (blood._doc?.author.toString() === user?.id) {
@@ -146,7 +142,7 @@ const checkOwnerShip = async ({ resourceId = "", user, userId = "" }) => {
       }
     }
   } catch (err) {
-    return BadRequest();
+    return errors.BadRequest();
   }
 };
 

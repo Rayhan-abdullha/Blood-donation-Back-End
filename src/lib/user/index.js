@@ -1,6 +1,7 @@
 const User = require("../../models/User");
 const defaults = require("../../config");
-const { authorizetionError } = require("../../utils/errors");
+const { errors } = require("../../utils");
+const { singleUserDataTransForom } = require("../../app/v1/user/utils");
 
 const findUsers = async ({
   admin = false,
@@ -27,6 +28,39 @@ const findUsers = async ({
     .skip(page * limit - limit)
     .limit(limit);
   return users;
+};
+
+const findUserInfo = async (id) => {
+  if (!id) {
+    throw errors.BadRequest("Id is Required");
+  }
+  let user = await User.findById(id).populate({ path: "volunteer" });
+
+  if (!user) {
+    throw errors.notFound();
+  }
+
+  user = { ...user._doc, id: user.id };
+  user = singleUserDataTransForom({ user });
+
+  return user;
+};
+
+const userOwnership = async ({ user = {}, resourceId = "" }) => {
+  if (user.role.includes("admin")) {
+    return true;
+  }
+
+  if (resourceId) {
+    const authUser = await User.findById(resourceId);
+    if (authUser) {
+      if (user.id === authUser.id) {
+        return true;
+      } else false;
+    }
+  }
+
+  return false;
 };
 
 const findUserByEmail = async (email) => {
@@ -67,4 +101,6 @@ module.exports = {
   findUsers,
   findUserByID,
   count,
+  findUserInfo,
+  userOwnership,
 };

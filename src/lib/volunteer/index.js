@@ -78,7 +78,7 @@ const findAll = async ({
 
 const findSingle = async ({ id, admin = false }) => {
   if (!id) {
-    throw notFound("Id is Required");
+    throw errors.BadRequest("Id is Required");
   }
   const volunteer = await Volunteer.findById(id).populate({
     path: "author",
@@ -86,14 +86,14 @@ const findSingle = async ({ id, admin = false }) => {
   });
 
   if (!volunteer) {
-    throw notFound();
+    throw errors.notFound();
   }
 
   if (
     (!admin && volunteer._doc.status === "pending") ||
     volunteer._doc.status === "block"
   ) {
-    throw authorizetionError();
+    throw errors.authorizetionError();
   }
   return {
     ...volunteer._doc,
@@ -108,7 +108,7 @@ const deleteVolunteer = async ({ id, user = {} }) => {
   const volunteer = await Volunteer.findById(id);
 
   if (!volunteer) {
-    throw errors.BadRequest("Bad Request");
+    throw errors.notFound("Bad Request");
   }
 
   if (user?.role.includes("admin")) {
@@ -152,12 +152,12 @@ const volunteerOwnerShip = async ({ user = {}, resourceId = "" }) => {
 
 const updatedVolunteerStatus = async ({ id, status = "", admin = false }) => {
   if (!id) {
-    throw BadRequest("Id is Required");
+    throw errors.BadRequest("Id is Required");
   }
   const volunteer = await Volunteer.findById(id);
 
   if (!volunteer) {
-    throw notFound("Volunteer is not Found");
+    throw errors.notFound("Volunteer is not Found");
   }
 
   if (admin) {
@@ -182,7 +182,7 @@ const updatedVolunteerStatus = async ({ id, status = "", admin = false }) => {
       updatedAt: volunteer._doc.updatedAt,
     };
   } else {
-    throw authorizetionError();
+    throw errors.authorizetionError();
   }
 };
 

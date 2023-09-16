@@ -1,6 +1,12 @@
-const { authorizetionError, notFound, BadRequest } = require("../utils/errors");
+const {
+  authorizetionError,
+  notFound,
+  BadRequest,
+  authenticationError,
+} = require("../utils/errors");
 const bloodSearvice = require("../lib/blood");
 const volunteerSearvices = require("../lib/volunteer");
+const userSearvices = require("../lib/user");
 
 const ownerShip =
   (model = "") =>
@@ -39,6 +45,18 @@ const ownerShip =
         return next(authorizetionError());
       } catch (err) {
         next(err);
+      }
+    }
+
+    if (model === "User") {
+      const ownerShip = await userSearvices.userOwnership({
+        user: req.user,
+        resourceId: req.params.id,
+      });
+      if (ownerShip) {
+        next();
+      } else {
+        next(authorizetionError());
       }
     }
   };
