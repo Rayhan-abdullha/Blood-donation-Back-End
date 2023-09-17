@@ -1,19 +1,10 @@
 const campaignSearvices = require("../../../../lib/campaign");
+const campaignData = require("../utils");
 const findAllCampaign = async (req, res, next) => {
   try {
     const campaigns = await campaignSearvices.findAll();
 
-    const data = campaigns.map((item) => {
-      return {
-        title: item.title,
-        description: item.description,
-        cover: item.cover,
-        status: item.status,
-        startDate: item.startDate,
-        endDate: item.endDate,
-        link: `/campaign/${item.id}`,
-      };
-    });
+    const data = campaignData.campaignDataTransformation({ item: campaigns });
 
     const response = {
       code: 200,

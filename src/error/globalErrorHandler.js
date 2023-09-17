@@ -1,7 +1,7 @@
 const handleValidationError = require("./handleValidationError");
 
 const globalErrorHandler = (err, _req, res, _next) => {
-  console.log("global error", err.message);
+  // console.log("global error", err.message);
   const errors = {
     code: 500,
     message: "Internal Server Error",

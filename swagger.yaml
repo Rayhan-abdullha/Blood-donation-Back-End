@@ -978,7 +978,7 @@ paths:
         - in: path
           name: id
           required: true
-          description: volunteer ID
+          description: User ID
           schema:
             type: string
             example: '6503308cd64533c41dd94d3f'
@@ -1044,7 +1044,7 @@ paths:
                       example: "456 Elm St, Apt 7C"    
       responses:
         "200":
-          description: Retruns a Upadated volunteer data
+          description: Retruns User Data
           content:
             "application/json":
               schema:
@@ -1093,9 +1093,6 @@ paths:
                           address:
                             type: object
                             properties:
-                              country:
-                                type: string
-                                example: "United States"
                               division:
                                 type: string
                                 example: "New York"
@@ -1108,7 +1105,7 @@ paths:
                               currentAddress:
                                 type: string
                                 example: "123 Main St, Apt 4B"
-                              parmanentAddress:
+                              streetAddress:
                                 type: string
                                 example: "456 Elm St, Apt 7C"  
                       - $ref: "#/components/schemas/Timestamp"
@@ -1245,7 +1242,7 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-  "/admin/users/:id":
+  "/users/{id}":
     delete:
       security:
         - bearerAuth: []

@@ -11,7 +11,6 @@ const register = async (req, res, next) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      cover: user.cover,
     };
 
     // token generate
@@ -25,8 +24,8 @@ const register = async (req, res, next) => {
         token,
       },
       links: {
-        self: "/auth/register",
-        signin: "/auth/signin",
+        self: `${req.url}`,
+        signin: `${req.url}`,
       },
     };
     return res.status(201).json(response);

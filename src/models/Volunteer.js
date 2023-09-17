@@ -32,7 +32,7 @@ const volunteerSchema = new Schema(
     cover: {
       type: String,
     },
-    nationalIdNo: {
+    nationalId: {
       type: String,
     },
     bio: {

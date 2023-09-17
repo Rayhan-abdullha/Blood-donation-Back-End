@@ -38,7 +38,6 @@ const loginUser = async ({ email, password }) => {
     name: hasUser.name,
     email: hasUser.email,
     role: hasUser.role,
-    cover: hasUser.cover,
   };
 
   // token generate

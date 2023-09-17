@@ -18,7 +18,7 @@ const volunteerSchema = Joi.object({
     currentAddress: Joi.string().required(),
   }),
   bio: Joi.string().min(0),
-  nationalIdNo: Joi.string().min(0),
+  nationalId: Joi.string().min(0),
 });
 
 module.exports = { volunteerSchema };

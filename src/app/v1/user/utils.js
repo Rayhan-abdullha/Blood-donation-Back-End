@@ -49,4 +49,8 @@ const singleUserDataTransForom = ({ user = {} }) => {
 
   return data;
 };
-module.exports = { getTransFormData, singleUserDataTransForom };
+
+module.exports = {
+  getTransFormData,
+  singleUserDataTransForom,
+};

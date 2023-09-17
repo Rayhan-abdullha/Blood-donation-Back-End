@@ -15,6 +15,18 @@ router
     authorization(["user", "admin"]),
     ownerShip("User"),
     usersController.findUserInfo
+  )
+  .patch(
+    authenticate,
+    authorization(["user", "admin"]),
+    ownerShip("User"),
+    usersController.updatedUserProfile
   );
+
+router
+  .route("/api/v1/users/:id/password")
+  .patch(usersController.changePassword);
+
+router.route("/api/v1/users/:id").delete(usersController.deleteSingleUser);
 
 module.exports = router;
