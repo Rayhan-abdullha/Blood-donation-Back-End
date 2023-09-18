@@ -1,9 +1,9 @@
-const volunteerSearvices = require("../../../../lib/volunteer");
-const updateVolunteer = async (req, res, next) => {
+const bloodSearvices = require("../../../../lib/blood");
+const updateBloodStatus = async (req, res, next) => {
   const { id } = req.params;
-  const status = req.body.status || "";
+  const { status } = req.body;
   try {
-    const updated = await volunteerSearvices.updatedVolunteerStatus({
+    const updated = await bloodSearvices.updateStatus({
       id,
       status,
       admin: req.admin,
@@ -23,4 +23,4 @@ const updateVolunteer = async (req, res, next) => {
   }
 };
 
-module.exports = updateVolunteer;
+module.exports = updateBloodStatus;

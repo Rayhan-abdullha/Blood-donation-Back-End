@@ -5,6 +5,7 @@ const {
   authenticate,
   authorization,
   ownerShip,
+  isAdmin,
 } = require("../../middleware");
 
 router
@@ -15,16 +16,21 @@ router
     bloodSchema.requestBloodValidation,
     bloodController.createBloodRequest
   )
-  .get(bloodController.findAllBloodRequest);
+  .get(isAdmin, bloodController.findAllBloodRequest);
 
 router
-  .route("/api/v1/bloods/:id")
+  .route("/api/v1/admin/bloods/:id")
   .delete(
     authenticate,
     authorization(["user", "admin"]),
     ownerShip("Blood"),
     bloodController.deleteBloodRequest
-  );
+  )
+  .get(isAdmin, bloodController.findSingleBlood);
+
+router
+  .route("/api/v1/admin/bloods/:id/status")
+  .patch(isAdmin, bloodController.updateBloodStatus);
 router
   .route("/api/v1/users/:userId/bloods")
   .get(

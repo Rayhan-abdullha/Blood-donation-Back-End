@@ -384,6 +384,8 @@ paths:
           $ref: "#/components/responses/500"
   "/bloods":
     get:
+      security:
+        - bearerAuth: []
       tags: [Blood]
       description: List of Blood Requests
       parameters:
@@ -586,56 +588,6 @@ paths:
         "500":
           $ref: "#/components/responses/500"
   "/bloods/{id}":
-    get:
-      security:
-        - bearerAuth: []
-      description: Get a Single Blood Request
-      tags: [Blood]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: Blood ID
-          schema:
-            type: string
-            example: 'sldflasdfladfadf'
-      responses:
-        "200":
-          description: Return a Single Blood Request
-          content:
-            "application/jons":
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    format: int32
-                    example: 200
-                  data:
-                    allOf:
-                      - type: object
-                        properties:
-                          _id:
-                            type: string
-                            example: aas899cn2afadhfaskf
-                          name:
-                            type: string
-                            example: Rayhan abdullah
-                          bloodGroup:
-                            type: string
-                            example: O+
-                          status:
-                            type: string
-                            example: in progress
-                        required: [_id, name, bloodGroup, status]
-                      - $ref: "#/components/schemas/Timestamp"
-                  links:
-                    type: string
-                    example: "/bloods/asdlfalsdfasf33aslf"
-        "404":
-          $ref: "#/components/responses/404"
-        "500":
-          $ref: "#/components/responses/500"
     delete:
       security:
         - bearerAuth: []
@@ -658,22 +610,150 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
+  "/admin/bloods/{id}":
+    get:
+      security:
+        - bearerAuth: []
+      description: Get a Single Blood Request
+      tags: [Blood]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Blood ID
+          schema:
+            type: string
+            example: '650856ddbce2d8fe74bde6a0'
+      responses:
+        "200":
+          description: Return a Single Blood Request
+          content:
+            "application/jons":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  title:
+                    type: string
+                    example: Need 2 bags Blood
+                  body:
+                    type: string
+                    example: I nedd 2 bags blood. plese help me. this is emargency.pataint is my wife
+                  place:
+                    type: string
+                    example: Charfassion hospital
+                  status:
+                    type: string
+                    example: 'pending'
+                  nationalID:
+                    type: string
+                    example: 6987451236548455
+                  phone:
+                    type: string
+                    example: 01798716196
+                  patientInfo:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: Mehjabin Khan
+                      age:
+                        type: integer
+                        format: int32
+                        example: 31
+                      bloodGroup:
+                        type: string
+                        example: A+
+                      phone:
+                        type: string
+                        example: 01798716197
+                      nationalID:
+                        type: string
+                        example: 666676736876616
+                      occupation:
+                        type: string
+                        example: actores
+                      gender:
+                        type: string
+                        example: female
+                      fatherName:
+                        type: string
+                        example: Mohiuddin Chowdhury
+                      motherName:
+                        type: string
+                        example: Ghazala Chowdhury
+                      cover:
+                        type: string
+                        format: url
+                        example: http://w3.unsplash.com
+                      address:
+                        type: object
+                        properties:
+                          country:
+                            type: string
+                            example: Bangladesh
+                          division:
+                            type: string
+                            example: Barishal
+                          dist:
+                            type: string
+                            example: Bhola
+                          upazila:
+                            type: string
+                            example: charfassion
+                          houseName:
+                            type: string
+                            example: "Mehjabin Vila"
+                        required: [country, division, dist, upazila, houseName]
+                      createdAt:
+                        type: string
+                        example: "10:33:21"
+                      updatedAt:
+                        type: string
+                        example: "10:33:21"
+                    required:
+                      [
+                        name,
+                        age,
+                        phone,
+                        occupation,
+                        gender,
+                        fatherName,
+                        motherName,
+                        bloodGroup,
+                        address,
+                      ]
+                required: [title, place, phoneNo, patientInfo]
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/admin/bloods/{id}/status":
     patch:
       security:
         - bearerAuth: []
       description: Update a Single Blood Request
       tags: [Blood]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Blood ID
+          schema:
+            type: string
+            example: '6503308cd64533c41dd94d3f'
       requestBody:
         content:
-          "application/josn":
+          "application/json":
             schema:
               type: object
               properties:
-                status: 
+                status:
                   type: string
-                  example: status
-              required:
-                - status
+                  example: in-progress
       responses:
         "200":
           description: Retruns a Upadated volunteer data
@@ -843,7 +923,7 @@ paths:
                         example: message is required!
         "500":
           $ref: "#/components/responses/500"
-  "/admin/inboxes/{id}":
+  "/admin/inboxes/{id}/reply":
     patch:
       security:
         - bearerAuth: []

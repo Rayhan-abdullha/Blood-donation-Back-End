@@ -11,6 +11,7 @@ const findAllBloodRequest = async (req, res, next) => {
 
   try {
     let bloods = await bloodSearvices.findAll({
+      admin: req.admin,
       page,
       limit,
       sortBy,

@@ -40,6 +40,6 @@ router
   );
 
 router
-  .route("/api/v1/admin/inboxes/:id")
+  .route("/api/v1/admin/inboxes/:id/reply")
   .patch(isAdmin, inboxController.replyMessage);
 module.exports = router;

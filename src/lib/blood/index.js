@@ -45,9 +45,14 @@ const findAll = async ({
   sortType = defaults.sortType,
   sortBy = defaults.sortBy,
   search = defaults.search,
+  admin = false,
 }) => {
+  let filter = { status: { $eq: "pending" } };
+  if (admin) {
+    filter = {};
+  }
   const sortStr = `${sortType === "dsc" ? "-" : ""}${sortBy}`;
-  let bloods = await Blood.find({ status: { $eq: "pending" } })
+  let bloods = await Blood.find(filter)
     .populate({
       path: "author",
       select: "name",
@@ -115,6 +120,45 @@ const findBloodsByUserId = async ({ id, path }) => {
   return data;
 };
 
+const updateStatus = async ({ id, status = "", admin = false }) => {
+  if (!admin) {
+    throw errors.authorizetionError();
+  }
+
+  if (!id) {
+    throw errors.BadRequest("Id is Required");
+  }
+  const blood = await Blood.findById(id);
+
+  if (!blood) {
+    throw errors.notFound("blood is not Found");
+  }
+  blood.status = status || blood.status;
+  await blood.save();
+
+  return {
+    id: blood.id,
+    status: blood._doc.status,
+    createdAt: blood._doc.createdAt,
+    updatedAt: blood._doc.updatedAt,
+  };
+};
+
+const findBloodRequestInfo = async ({ id, admin = false }) => {
+  if (!admin) {
+    throw errors.authorizetionError();
+  }
+  if (!id) {
+    throw errors.BadRequest("Id is Required");
+  }
+  const blood = await Blood.findById(id);
+  if (!blood) {
+    throw errors.notFound();
+  }
+
+  return { ...blood._doc, id: blood.id };
+};
+
 const checkOwnerShip = async ({ resourceId = "", user, userId = "" }) => {
   try {
     if (user?.role.includes("admin")) {
@@ -169,4 +213,6 @@ module.exports = {
   count,
   findBloodsByUserId,
   checkOwnerShip,
+  findBloodRequestInfo,
+  updateStatus,
 };
