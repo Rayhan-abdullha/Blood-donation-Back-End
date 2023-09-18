@@ -1,12 +1,14 @@
 const campaignSearvices = require("../../../../lib/campaign");
 const createCampaign = async (req, res, next) => {
-  const cover = req.body.cover || "";
-  const { title, description, startDate, endDate } = req.data;
+  const { title, body, cover, startDate, endDate, open, close } = req.data;
   try {
     const campaign = await campaignSearvices.createCampaign({
+      admin: req.admin,
       title,
-      description,
+      body,
       cover,
+      open,
+      close,
       startDate,
       endDate,
     });
@@ -17,8 +19,7 @@ const createCampaign = async (req, res, next) => {
     };
     return res.status(201).json(response);
   } catch (err) {
-    console.log("err");
-    return res.status(400).json(err);
+    next(err);
   }
 };
 

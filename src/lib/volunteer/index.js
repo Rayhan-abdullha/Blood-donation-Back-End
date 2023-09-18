@@ -1,14 +1,9 @@
 const Volunteer = require("../../models/Volunteer");
 const { errors } = require("../../utils");
 const User = require("../../models/User");
-const {
-  notFound,
-  authorizetionError,
-  BadRequest,
-} = require("../../utils/errors");
 
 const volunteerRequest = async ({
-  author = {},
+  user = {},
   occupation,
   age,
   gender,
@@ -20,8 +15,14 @@ const volunteerRequest = async ({
   bio = "",
   nationalIdNo = "",
 }) => {
+  const findVolunteer = await Volunteer.find({ author: { $eq: user.id } });
+
+  if (findVolunteer.length) {
+    throw errors.BadRequest("Your are already requested", 409);
+  }
+
   const volunteer = new Volunteer({
-    author: author.id,
+    author: user.id,
     occupation,
     age,
     gender,
@@ -34,6 +35,10 @@ const volunteerRequest = async ({
     nationalIdNo,
   });
   await volunteer.save();
+
+  const authUser = await User.findById(user.id);
+  authUser.volunteer = volunteer.id;
+  await authUser.save();
   return { ...volunteer._doc, id: volunteer.id };
 };
 
@@ -127,7 +132,7 @@ const deleteVolunteer = async ({ id, user = {} }) => {
 };
 
 const volunteerOwnerShip = async ({ user = {}, resourceId = "" }) => {
-  if (user?.role?.includes("admin")) {
+  if (user?.role.includes("admin")) {
     return true;
   }
 
@@ -140,14 +145,7 @@ const volunteerOwnerShip = async ({ user = {}, resourceId = "" }) => {
     }
   }
 
-  if (user?.role.includes("volunteer")) {
-    return false;
-  }
-  const findVolunteer = await Volunteer.find({ author: { $eq: user.id } });
-
-  if (findVolunteer.length) {
-    return false;
-  } else return true;
+  return true;
 };
 
 const updatedVolunteerStatus = async ({ id, status = "", admin = false }) => {

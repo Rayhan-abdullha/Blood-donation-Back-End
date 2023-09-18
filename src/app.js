@@ -29,19 +29,10 @@ app.get("/health", async (_req, res, next) => {
 });
 
 app.get("/", async (_req, res, next) => {
-  // await Volunteer.deleteMany();
-  // await Blood.deleteMany();
-  // await User.deleteMany();
-  // await Campaign.deleteMany();
-  // await Inbox.deleteMany();
   try {
-    const volunteer = await Volunteer.find()
-      .populate({ path: "author", select: "name" })
-      .select("id author status");
-
-    res.status(200).json({ status: "OK", volunteer });
+    const user = await Campaign.find();
+    res.status(200).json({ status: "OK", data: user });
   } catch (err) {
-    // res.status(200).json(err);
     next(notFound());
   }
 });

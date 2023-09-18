@@ -8,7 +8,7 @@ const createVolunteer = async (req, res, next) => {
 
   try {
     const volunteer = await searvice.volunteerRequest({
-      author: req?.user,
+      user: req?.user,
       occupation,
       age,
       gender,

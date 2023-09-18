@@ -843,6 +843,75 @@ paths:
                         example: message is required!
         "500":
           $ref: "#/components/responses/500"
+  "/admin/inboxes/{Id}":
+    patch:
+      security:
+        - bearerAuth: []
+      description: Update Inbox messages and send reply
+      tags: [Inbox]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Inbox ID
+          schema:
+            type: string
+            example: '6503308cd64533c41dd94d3f'
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: seen
+                reply: 
+                  type: string
+                  example: i am fine
+              required: [status, reply]
+      responses:
+        "200":
+          description: Retruns a Upadated volunteer data
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Updated Volunteer
+                  data:
+                    allOf:
+                      - type: object
+                        properties:
+                          id: 
+                            type: string
+                            example: 650314f55b911c059f2c9123
+                          status:
+                            type: string
+                            example: seen
+                          reply:
+                            type: string
+                            example: i am fine
+                      - $ref: "#/components/schemas/Timestamp"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/volunteers/asdlfalsdfasf33aslf/status"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
   "/users/{id}/inboxes":
     get:
       security:
@@ -1340,10 +1409,6 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: integer
-                  format: int32
-                  example: jlmnhydgbvnnxwhumcncbhs
                 title:
                   type: string
                   example: Free Blood Check
@@ -1366,10 +1431,7 @@ paths:
                 endDate:
                   type: string
                   example: 06/11/2023
-                links:
-                  type: string
-                  example: "/volunteers/k@3ala3kdladc33bpwo3"
-              required: [id, title, links,open, close, body, startDate, endDate]
+              required: [title,body,cover, open, close, startDate, endDate]
       responses:
         "201":
           description: Retruns Campaign Data
@@ -1450,7 +1512,12 @@ paths:
         - $ref: "#/components/parameters/limitPrams"
         - $ref: "#/components/parameters/sortTypePrams"
         - $ref: "#/components/parameters/sortByprams"
-        - $ref: "#/components/parameters/searchPrams"
+          in: query
+          name: search
+          description: the search to filter Campaign List
+          schema:
+            type: string
+            example: title
       responses:
         "200":
           description: Retruns a list Campaigns
@@ -1499,7 +1566,7 @@ paths:
                               example: completed
                             links:
                               type: string
-                              example: "/volunteers/k@3ala3kdladc33bpwo3"
+                              example: "/campaigns/flmnkhytfdcghajsdfj"
                           required: [id, title, links, open, close, cover, body, startDate, endDate]
                         - $ref: "#/components/schemas/Timestamp"
                   pagination:
@@ -1531,7 +1598,7 @@ paths:
         - in: path
           name: id
           required: true
-          description: volunteer ID
+          description: Campaign ID
           schema:
             type: string
             example: '6503308cd64533c41dd94d3f'
@@ -1579,7 +1646,7 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: Updated Volunteer
+                    example: Updated Campaing Info
                   data:
                     allOf:
                       - type: object
@@ -1740,7 +1807,7 @@ components:
               type: string
               example: Dhaka
           required: [division, dist, upazilla, currentAddress, streetAddress]
-        nationalIdNo:
+        nationalId:
           type: string
           example: 0983734826324
         bio:

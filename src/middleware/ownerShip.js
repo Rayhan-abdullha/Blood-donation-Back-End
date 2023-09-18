@@ -7,6 +7,7 @@ const {
 const bloodSearvice = require("../lib/blood");
 const volunteerSearvices = require("../lib/volunteer");
 const userSearvices = require("../lib/user");
+const inboxSearvices = require("../lib/inbox");
 
 const ownerShip =
   (model = "") =>
@@ -54,9 +55,25 @@ const ownerShip =
         resourceId: req.params.id,
       });
       if (ownerShip) {
-        next();
+        return next();
       } else {
         next(authorizetionError());
+      }
+    }
+
+    if (model === "Inbox") {
+      try {
+        const ownerShip = inboxSearvices.inboxOwnership({
+          user: req.user,
+          resourceId: req.params.id,
+        });
+        if (ownerShip) {
+          return next();
+        } else {
+          return next(authorizetionError());
+        }
+      } catch (err) {
+        return next(err);
       }
     }
   };

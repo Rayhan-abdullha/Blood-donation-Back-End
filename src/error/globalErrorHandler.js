@@ -21,7 +21,7 @@ const globalErrorHandler = (err, _req, res, _next) => {
   } else if (!err.status) {
     res
       .status(err.status || 520)
-      .json({ code: err.status || 520, message: err });
+      .json({ code: err.status || 520, message: err.message });
   } else if (err instanceof Error) {
     return res
       .status(err.status)

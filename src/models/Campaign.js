@@ -2,6 +2,10 @@ const { Schema, model } = require("mongoose");
 
 const campaignSchema = new Schema(
   {
+    admin: {
+      type: Schema.ObjectId,
+      ref: "Campaign",
+    },
     title: {
       type: String,
       minLength: [6, "Title is too Short"],
@@ -12,15 +16,17 @@ const campaignSchema = new Schema(
       minLength: [10, "Description is too Short"],
       required: true,
     },
+    cover: {
+      type: String,
+      required: true,
+    },
     open: {
       type: String,
-      minLength: [3, "Open is too Short"],
-      minLength: [5, "Open is too Long"],
+      required: true,
     },
     close: {
       type: String,
-      minLength: [3, "Open is too Short"],
-      minLength: [5, "Open is too Long"],
+      required: true,
     },
     status: {
       type: String,

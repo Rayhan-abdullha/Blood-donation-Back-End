@@ -4,15 +4,26 @@ const {
   campaignSchema,
   authenticate,
   authorization,
+  isAdmin,
 } = require("../../middleware");
+router
+  .route("/api/v1/admin/campaigns")
+  .post(
+    isAdmin,
+    campaignSchema.createCampaignValidaion,
+    campaignController.createCampaign
+  );
 router
   .route("/api/v1/campaigns")
   .post(
-    authenticate,
-    authorization(["admin", "user"]),
+    isAdmin,
     campaignSchema.createCampaignValidaion,
     campaignController.createCampaign
   )
-  .get(campaignController.findAllCampaign);
+  .get(isAdmin, campaignController.findAllCampaign);
 
+router
+  .route("/api/v1/admin/campaigns/:id")
+  .patch(isAdmin, campaignController.updateCampaign)
+  .delete(isAdmin, campaignController.deleteSingleCampaign);
 module.exports = router;

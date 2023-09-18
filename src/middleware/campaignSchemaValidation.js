@@ -1,6 +1,7 @@
 const { errors } = require("../utils");
 const { createCampaignSchema } = require("../validation/campaign");
 const createCampaignValidaion = async (req, res, next) => {
+  console.log(req.body);
   const { error, value } = createCampaignSchema.validate(
     { ...req.body },
     { abortEarly: false }
