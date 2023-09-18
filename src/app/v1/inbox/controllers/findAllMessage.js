@@ -1,32 +1,25 @@
-const campaignSearvices = require("../../../../lib/campaign");
+const inboxSearvices = require("../../../../lib/inbox");
 const defaults = require("../../../../config");
-const bloodSearvices = require("../../../../lib/blood");
 const { query } = require("../../../../utils");
-const bloodUtils = require("../utils");
 
-const findAllCampaign = async (req, res, next) => {
+const findAllMessages = async (req, res, next) => {
   const page = +req.query.page || defaults.page;
   const limit = +req.query.limit || defaults.limit;
   const sortType = req.query.sortType || defaults.sortType;
   const sortBy = req.query.sortBy || defaults.sortBy;
-  const search = req.query.search || defaults.search;
 
   try {
-    const campaigns = await campaignSearvices.findAll({
+    const inboxes = await inboxSearvices.findAll({
       admin: req.admin,
       page,
       limit,
       sortType,
       sortBy,
-      search,
+      path: req.path,
     });
 
-    const totalItems = await campaignSearvices.count({
-      search,
-      admin: req.admin,
-    });
     const pagination = query.getPagination({
-      totalItems,
+      totalItems: inboxes.length,
       limit,
       page,
     });
@@ -42,7 +35,7 @@ const findAllCampaign = async (req, res, next) => {
 
     const response = {
       code: 200,
-      data: campaigns,
+      data: inboxes,
       pagination,
       links,
     };
@@ -52,4 +45,4 @@ const findAllCampaign = async (req, res, next) => {
   }
 };
 
-module.exports = findAllCampaign;
+module.exports = findAllMessages;

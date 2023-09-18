@@ -5,6 +5,7 @@ const {
   authenticate,
   authorization,
   ownerShip,
+  isAdmin,
 } = require("../../middleware");
 router
   .route("/api/v1/inboxes")
@@ -17,6 +18,10 @@ router
   );
 
 router
+  .route("/api/v1/admin/inboxes")
+  .get(isAdmin, inboxController.findAllMessages);
+
+router
   .route("/api/v1/users/:id/inboxes")
   .get(
     authenticate,
@@ -25,4 +30,16 @@ router
     inboxController.findInbox
   );
 
+router
+  .route("/api/v1/inboxes/:id")
+  .delete(
+    authenticate,
+    authorization(["admin", "user"]),
+    ownerShip("Inbox"),
+    inboxController.deleteMessage
+  );
+
+router
+  .route("/api/v1/admin/inboxes/:id")
+  .patch(isAdmin, inboxController.replyMessage);
 module.exports = router;

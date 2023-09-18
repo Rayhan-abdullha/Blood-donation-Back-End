@@ -16,7 +16,6 @@ const findSingleUserMessages = async (req, res, next) => {
     });
     const response = {
       code: 201,
-      message: "Message has been sent",
       data,
       link: {
         self: "/inboxes",

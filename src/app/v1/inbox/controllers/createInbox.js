@@ -10,13 +10,7 @@ const createInbox = async (req, res, next) => {
     const response = {
       code: 201,
       message: "Message has been sent",
-      data: {
-        id: sendMessage.id,
-        message: sendMessage.message,
-        status: sendMessage.status,
-        createAt: sendMessage.createdAt,
-        updatedAt: sendMessage.updatedAt,
-      },
+      data: sendMessage,
       link: {
         self: `${req.url}`,
       },

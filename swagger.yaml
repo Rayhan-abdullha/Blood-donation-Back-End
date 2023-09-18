@@ -795,7 +795,7 @@ paths:
                     example: 201
                   message:
                     type: string
-                    example: Volunteer request has been sent
+                    example: Message has been sent
                   data:
                     allOf:
                       - type: object
@@ -805,7 +805,7 @@ paths:
                             example: "asldfasldf23423947"
                           message:
                             type: string
-                            example: Rayhan Abdullah
+                            example: "Hi, admin, i want to be a volunteer, can i?"
                           status:
                             type: string
                             example: unseen
@@ -843,7 +843,7 @@ paths:
                         example: message is required!
         "500":
           $ref: "#/components/responses/500"
-  "/admin/inboxes/{Id}":
+  "/admin/inboxes/{id}":
     patch:
       security:
         - bearerAuth: []
@@ -883,7 +883,7 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: Updated Volunteer
+                    example: reply message
                   data:
                     allOf:
                       - type: object
@@ -906,6 +906,96 @@ paths:
                         example: "/volunteers/asdlfalsdfasf33aslf/status"
         "400":
           $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/admin/inboxes":
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Inbox]
+      description: List al of Messages
+      parameters:
+        - $ref: "#/components/parameters/pagePrams"
+        - $ref: "#/components/parameters/limitPrams"
+        - $ref: "#/components/parameters/sortTypePrams"
+        - $ref: "#/components/parameters/sortByprams"
+      responses:
+        "200":
+          description: Retruns a list Campaigns
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                      - type: object
+                        properties:
+                          id:
+                            type: string
+                            example: "asldfasldf23423947"
+                          message:
+                            type: object
+                            properties:
+                              msg: 
+                                type: string
+                                example: 'Hi, Admin'
+                              repay:
+                                type: string
+                                example: 'Hello, how are you'
+                          status:
+                            type: string
+                            example: unseen
+                          link: 
+                            type: string
+                            example: '/admin/inboxes'
+                        required: [id, message, status, link]
+                      - $ref: "#/components/schemas/Timestamp"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/campaigns"
+                      nextPage:
+                        type: string
+                        example: "/campaigns?page=2&limit=10&sortType=dsc&sortBy=donateCount"
+                      prevPage:
+                        type: string
+                        example: "/campaigns?page=1&limit=10&sortType=dsc&sortBy=donateCount"
+                    required: [self]
+        "400":
+          $ref: "#/components/responses/400"
+        "500":
+          $ref: "#/components/responses/500"
+  "/inboxes/{id}":
+    delete:
+      security:
+        - bearerAuth: []
+      description: Delete a Message
+      tags: [Inbox]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Inbox ID
+          schema:
+            type: string
+            example: 'lkjjdsaiuencdmcndgeujd'
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
         "401":
           $ref: "#/components/responses/401"
         "404":
@@ -1512,12 +1602,7 @@ paths:
         - $ref: "#/components/parameters/limitPrams"
         - $ref: "#/components/parameters/sortTypePrams"
         - $ref: "#/components/parameters/sortByprams"
-          in: query
-          name: search
-          description: the search to filter Campaign List
-          schema:
-            type: string
-            example: title
+        - $ref: "#/components/parameters/searchPrams"
       responses:
         "200":
           description: Retruns a list Campaigns

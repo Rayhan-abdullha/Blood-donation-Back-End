@@ -25,7 +25,7 @@ const register = async (req, res, next) => {
       },
       links: {
         self: `${req.url}`,
-        signin: `${req.url}`,
+        signin: `/api/v1/auth/signin`,
       },
     };
     return res.status(201).json(response);

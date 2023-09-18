@@ -30,7 +30,7 @@ app.get("/health", async (_req, res, next) => {
 
 app.get("/", async (_req, res, next) => {
   try {
-    const user = await Campaign.find();
+    const user = await Inbox.find();
     res.status(200).json({ status: "OK", data: user });
   } catch (err) {
     next(notFound());

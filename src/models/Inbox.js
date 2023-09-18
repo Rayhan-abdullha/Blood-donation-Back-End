@@ -15,7 +15,6 @@ const inboxSchema = new Schema(
         },
         reply: {
           type: [String],
-          minLength: [2, "reply is to Short"],
         },
       },
       required: true,
