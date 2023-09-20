@@ -15,7 +15,7 @@ const myFormat = printf(({ level, message, label, timestamp }) => {
 
 const infoLogger = winston.createLogger({
   level: "info",
-  format: combine(label({ label: "PH" }), timestamp(), prettyPrint(), myFormat),
+  format: combine(label({ label: "R" }), timestamp(), prettyPrint(), myFormat),
   transports: [
     new transports.Console(),
     new DailyRotateFile({
@@ -36,7 +36,7 @@ const infoLogger = winston.createLogger({
 
 const errorLogger = winston.createLogger({
   level: "error",
-  format: combine(label({ label: "PH" }), timestamp(), prettyPrint()),
+  format: combine(label({ label: "R" }), timestamp(), prettyPrint()),
   transports: [
     new transports.Console(),
     new DailyRotateFile({

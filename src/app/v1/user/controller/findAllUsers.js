@@ -33,6 +33,7 @@ const findAllUsers = async (req, res, next) => {
       query: req.query,
       hasNext: !!pagination.next,
       hasPrev: !!pagination.prev,
+      page,
     });
 
     // data transformation

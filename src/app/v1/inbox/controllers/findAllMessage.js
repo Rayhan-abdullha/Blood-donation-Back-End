@@ -31,6 +31,7 @@ const findAllMessages = async (req, res, next) => {
       query: req.query,
       hasNext: !!pagination.next,
       hasPrev: !!pagination.prev,
+      page,
     });
 
     const response = {

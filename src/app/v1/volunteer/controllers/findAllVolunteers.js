@@ -21,7 +21,6 @@ const findAllVoulneers = async (req, res, next) => {
       search,
       admin: req.admin,
     });
-    console.log(totalItems);
     const totalPages = Math.ceil(totalItems / limit);
 
     const pagination = {
