@@ -1,4 +1,4 @@
-const { hasing } = require("../../utils/");
+const { hasing } = require("../../src/utils");
 
 // generate hash
 describe("generatehash", () => {

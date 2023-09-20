@@ -1,4 +1,4 @@
-const { errors } = require("../../utils"); // Replace with the actual path to your notFound module
+const { errors } = require("../../src/utils"); // Replace with the actual path to your notFound module
 
 // not found
 describe("notFound", () => {

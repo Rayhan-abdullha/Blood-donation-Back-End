@@ -2,7 +2,7 @@ const {
   generateQueryString,
   getPagination,
   getHateOasForAllItems,
-} = require("../../utils/query");
+} = require("../../src/utils/query");
 
 describe("generateQueryString", () => {
   it("should generate a valid query string for a single key-value pair", () => {
