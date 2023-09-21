@@ -3,9 +3,8 @@ const createVolunteer = async (req, res, next) => {
   const cover = req.body.cover ?? "";
   const study = req.body.study ?? "";
   const bio = req.body.bio ?? "";
-  const nationalIdNo = req.body.nationalIdNo ?? "";
+  const nationalId = req.body.nationalId ?? "";
   const { occupation, age, gender, bloodGroup, phone, address } = req.validData;
-
   try {
     const volunteer = await searvice.volunteerRequest({
       user: req?.user,
@@ -18,7 +17,7 @@ const createVolunteer = async (req, res, next) => {
       cover,
       study,
       bio,
-      nationalIdNo,
+      nationalId,
     });
 
     const response = {

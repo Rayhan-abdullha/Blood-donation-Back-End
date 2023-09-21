@@ -1,6 +1,5 @@
 const { verifyToken } = require("../lib/token");
 const userSearvice = require("../lib/user");
-const { authenticationError } = require("../utils/errors");
 const isAdmin = async (req, _res, next) => {
   if (req.headers.authorization === undefined) {
     req.admin = false;

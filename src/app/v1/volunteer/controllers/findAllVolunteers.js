@@ -1,5 +1,9 @@
 const volunteerSearvice = require("../../../../lib/volunteer");
 const { query } = require("../../../../utils");
+const {
+  getPagination,
+  getHateOasForAllItems,
+} = require("../../../../utils/query");
 
 const findAllVoulneers = async (req, res, next) => {
   const page = +req.query.page || 1;
@@ -21,39 +25,16 @@ const findAllVoulneers = async (req, res, next) => {
       search,
       admin: req.admin,
     });
-    const totalPages = Math.ceil(totalItems / limit);
 
-    const pagination = {
+    const pagination = getPagination({ totalItems, limit, page });
+
+    const links = getHateOasForAllItems({
+      path: req.path,
+      query: req.query,
+      hasNext: !!pagination.next,
+      hasPrev: !!pagination.prev,
       page,
-      limit,
-      totalPages,
-      totalItems,
-    };
-    if (page < totalPages) {
-      pagination.nextPage = page + 1;
-    }
-
-    if (page > totalPages || page !== 1) {
-      pagination.prevPage = page - 1;
-    }
-
-    const links = {
-      self: `${req.url}`,
-    };
-    if (pagination.prevPage) {
-      const qs = query.generateQueryString({
-        queryParams: req.query,
-        page: page - 1,
-      });
-      links.prevPage = `${req.path}?${qs}`;
-    }
-    if (pagination.nextPage) {
-      const qs = query.generateQueryString({
-        queryParams: req.query,
-        page: page + 1,
-      });
-      links.nextPage = `${req.path}?${qs}`;
-    }
+    });
     const response = {
       code: 200,
       data: volunteers,

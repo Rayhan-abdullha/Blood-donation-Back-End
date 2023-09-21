@@ -1,6 +1,5 @@
 const { verifyToken } = require("../lib/token");
 const userSearvice = require("../lib/user");
-const User = require("../models/User");
 const { authenticationError } = require("../utils/errors");
 
 const authenticate = async (req, _res, next) => {
@@ -23,7 +22,7 @@ const authenticate = async (req, _res, next) => {
       next(authenticationError("You are Unauthorized"));
     }
     req.user = { ...user._doc, id: user.id };
-    next();
+    return next();
   } catch (err) {
     next(authenticationError());
   }

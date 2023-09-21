@@ -13,7 +13,7 @@ const volunteerRequest = async ({
   cover = "",
   study = "",
   bio = "",
-  nationalIdNo = "",
+  nationalId = "",
 }) => {
   const findVolunteer = await Volunteer.find({ author: { $eq: user.id } });
 
@@ -32,7 +32,7 @@ const volunteerRequest = async ({
     cover,
     study,
     bio,
-    nationalIdNo,
+    nationalId,
   });
   await volunteer.save();
 
@@ -166,7 +166,8 @@ const updatedVolunteerStatus = async ({ id, status = "", admin = false }) => {
     volunteer.status = status;
     await volunteer.save();
 
-    const author = await User.findById(volunteer._doc.author.toString());
+    const author = await User.findById(volunteer._doc?.author.toString());
+
     if (status === "volunteer" && !author._doc.role.includes("volunteer")) {
       author._doc.role.push(status);
       author.volunteer = volunteer.id;
