@@ -47,7 +47,7 @@ const findAll = async ({
   search = defaults.search,
   admin = false,
 }) => {
-  let filter = { status: { $eq: "pending" } };
+  let filter = { status: { $in: ["pending", "in-progress", "done"] } };
   if (admin) {
     filter = {};
   }
@@ -99,10 +99,6 @@ const findBloodsByUserId = async ({ id, path }) => {
   }
   const bloods = await Blood.find({ author: id });
 
-  if (bloods.length === 0) {
-    throw errors.notFound("Empty Blood Request List");
-  }
-
   const data = bloods.map((item) => {
     item = item._doc;
     return {
@@ -144,10 +140,11 @@ const updateStatus = async ({ id, status = "", admin = false }) => {
   };
 };
 
-const findBloodRequestInfo = async ({ id, admin = false }) => {
-  if (!admin) {
-    throw errors.authorizetionError();
-  }
+const findBloodRequestInfo = async ({
+  id,
+  admin = false,
+  authUser = false,
+}) => {
   if (!id) {
     throw errors.BadRequest("Id is Required");
   }
@@ -155,8 +152,18 @@ const findBloodRequestInfo = async ({ id, admin = false }) => {
   if (!blood) {
     throw errors.notFound();
   }
+  if (admin && !authUser) {
+    return { ...blood._doc, id: blood.id };
+  }
+  if (authUser && !admin) {
+    if (authUser.id === blood.author.toString()) {
+      return { ...blood._doc, id: blood.id };
+    } else {
+      throw errors.authorizetionError();
+    }
+  }
 
-  return { ...blood._doc, id: blood.id };
+  throw errors.authorizetionError();
 };
 
 const checkOwnerShip = async ({ resourceId = "", user, userId = "" }) => {

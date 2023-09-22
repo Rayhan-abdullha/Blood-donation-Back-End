@@ -57,16 +57,22 @@ const findMessageByuserId = async (id) => {
   if (!id) {
     throw errors.BadRequest("Id is Required");
   }
-  const messages = await User.findById(id).populate({
-    path: "inbox",
-    select: ["id", "message", "status", "createdAt", "updatedAt"],
+  const messages = await Inbox.find({ author: id });
+
+  const data = messages.map((item) => {
+    return {
+      id: item.id,
+      message: item.message,
+      status: item.status,
+      createAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    };
   });
 
-  return [...messages._doc.inbox];
+  return data;
 };
 
 const replyMessage = async ({ admin = false, id, replyMsg = "" }) => {
-  console.log(id);
   if (!admin) {
     throw errors.authorizetionError();
   }
@@ -111,7 +117,11 @@ const inboxOwnership = ({ user = {}, resourceId = "" }) => {
   }
 
   if (resourceId) {
-    if (resourceId === user.id) {
+    if (user.inbox.includes(resourceId)) {
+      return true;
+    }
+
+    if (user.id === resourceId) {
       return true;
     }
     return false;

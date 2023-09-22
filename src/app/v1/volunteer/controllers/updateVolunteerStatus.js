@@ -7,6 +7,7 @@ const updateVolunteer = async (req, res, next) => {
       id,
       status,
       admin: req.admin,
+      authUser: req.authUser,
     });
 
     const response = {

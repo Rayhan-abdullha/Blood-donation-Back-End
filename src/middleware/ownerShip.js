@@ -24,7 +24,6 @@ const ownerShip =
           return next(isOwner);
         }
         if (isOwner) {
-          console.log("yes");
           return next();
         }
         return next(authorizetionError());

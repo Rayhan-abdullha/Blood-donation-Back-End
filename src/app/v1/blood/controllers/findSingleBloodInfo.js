@@ -1,11 +1,11 @@
 const bloodSearvices = require("../../../../lib/blood");
 const findSingleBlood = async (req, res, next) => {
   const { id } = req.params;
-
   try {
     const blood = await bloodSearvices.findBloodRequestInfo({
       id,
       admin: req.admin,
+      authUser: req.authUser,
     });
 
     const response = {

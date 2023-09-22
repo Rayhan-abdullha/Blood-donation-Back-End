@@ -21,33 +21,35 @@ const singleUserDataTransForom = ({ user = {} }) => {
     role: user.role,
   };
 
-  const volunteerData = {
-    id: user.volunteer._id,
-    bloodGroup: user.volunteer.bloodGroup,
-    occupation: user.volunteer.occupation,
-    age: user.volunteer.age,
-    gender: user.volunteer.gender,
-    phone: user.volunteer.phone,
-    status: user.volunteer.status,
-    bio: user.volunteer.bio,
-    study: user.volunteer.study,
-    cover: user.volunteer.cover,
-    nationalID: user.volunteer.nationalIdNo,
-    address: {
-      country: user.volunteer.address.country,
-      division: user.volunteer.address.division,
-      dist: user.volunteer.address.dist,
-      upazila: user.volunteer.address.upazila,
-      currentAddress: user.volunteer.address.currentAddress,
-      parmanentAddress: user.volunteer.address.parmanentAddress,
-    },
-  };
-  const data = {
-    user: userData,
-    volunteer: volunteerData,
-  };
+  if (user.role.includes("volunteer")) {
+    const volunteerData = {
+      id: user?.volunteer?.id,
+      bloodGroup: user?.volunteer?.bloodGroup,
+      occupation: user.volunteer?.occupation,
+      age: user?.volunteer?.age,
+      gender: user?.volunteer?.gender,
+      phone: user?.volunteer?.phone,
+      status: user?.volunteer?.status,
+      bio: user?.volunteer?.bio,
+      study: user?.volunteer?.study,
+      cover: user?.volunteer?.cover,
+      nationalID: user?.volunteer?.nationalIdNo,
+      address: {
+        country: user?.volunteer?.address?.country,
+        division: user?.volunteer?.address?.division,
+        dist: user?.volunteer?.address?.dist,
+        upazila: user?.volunteer?.address?.upazila,
+        currentAddress: user?.volunteer?.address?.currentAddress,
+        parmanentAddress: user?.volunteer?.address?.parmanentAddress,
+      },
+    };
+    return {
+      user: userData,
+      volunteer: volunteerData,
+    };
+  }
 
-  return data;
+  return userData;
 };
 
 module.exports = {

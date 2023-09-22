@@ -21,6 +21,7 @@ const isAdmin = async (req, _res, next) => {
 
     if (!user.role.includes("admin")) {
       req.admin = false;
+      req.authUser = { ...user._doc, id: user.id };
       return next();
     }
     req.admin = { ...user._doc, id: user.id };

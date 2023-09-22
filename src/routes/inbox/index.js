@@ -18,8 +18,8 @@ router
   );
 
 router
-  .route("/api/v1/admin/inboxes")
-  .get(isAdmin, inboxController.findAllMessages);
+  .route("/api/v1/inboxes")
+  .get(authenticate, isAdmin, inboxController.findAllMessages);
 
 router
   .route("/api/v1/users/:id/inboxes")
@@ -40,6 +40,6 @@ router
   );
 
 router
-  .route("/api/v1/admin/inboxes/:id/reply")
-  .patch(isAdmin, inboxController.replyMessage);
+  .route("/api/v1/inboxes/:id/reply")
+  .patch(authenticate, isAdmin, inboxController.replyMessage);
 module.exports = router;

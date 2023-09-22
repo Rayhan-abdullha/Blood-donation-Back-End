@@ -19,6 +19,7 @@ const findAllVoulneers = async (req, res, next) => {
       sortType,
       search,
       admin: req.admin,
+      authUser: req.authUser,
     });
 
     const totalItems = await volunteerSearvice.count({

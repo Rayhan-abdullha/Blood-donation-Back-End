@@ -50,6 +50,7 @@ const findAll = async ({
   sortBy = "",
   search = "",
   admin = false,
+  authUser = false,
 }) => {
   const sortStr = `${sortType === "dsc" ? "-" : ""}${sortBy}`;
   let volunteers = await Volunteer.find()
@@ -61,7 +62,7 @@ const findAll = async ({
     .skip(page * limit - limit)
     .limit(limit);
 
-  if (!admin) {
+  if (!admin && !authUser) {
     volunteers = volunteers.filter((item) => item.status !== "pending");
   }
 
@@ -81,17 +82,28 @@ const findAll = async ({
   return filteredData;
 };
 
-const findSingle = async ({ id, admin = false }) => {
+const findSingle = async ({ id, admin = false, authUser = false }) => {
   if (!id) {
     throw errors.BadRequest("Id is Required");
   }
   const volunteer = await Volunteer.findById(id).populate({
     path: "author",
-    select: ["name", "role"],
+    select: ["name", "id", "role"],
   });
 
   if (!volunteer) {
     throw errors.notFound();
+  }
+
+  if (authUser) {
+    if (volunteer._doc?.author?.id?.toString() === authUser.id) {
+      return {
+        ...volunteer._doc,
+        id: volunteer.id,
+      };
+    } else {
+      throw errors.authorizetionError();
+    }
   }
 
   if (
@@ -120,6 +132,7 @@ const deleteVolunteer = async ({ id, user = {} }) => {
     if (volunteer._doc.status !== "pending") {
       const userDel = await User.findById(volunteer.author.toString());
       userDel._doc.role.pop();
+      userDel.volunteer = null;
       await userDel.save();
     }
     return await Volunteer.findByIdAndDelete(id);
@@ -148,7 +161,15 @@ const volunteerOwnerShip = async ({ user = {}, resourceId = "" }) => {
   return true;
 };
 
-const updatedVolunteerStatus = async ({ id, status = "", admin = false }) => {
+const updatedVolunteerStatus = async ({
+  id,
+  status = "",
+  admin = false,
+  authUser = false,
+}) => {
+  if (!authUser && !admin) {
+    throw errors.authenticationError();
+  }
   if (!id) {
     throw errors.BadRequest("Id is Required");
   }

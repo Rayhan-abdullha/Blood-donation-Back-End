@@ -6,7 +6,9 @@ const {
   authorization,
   ownerShip,
 } = require("../../middleware");
-router.route("/api/v1/admin/users").get(isAdmin, usersController.findAllUsers);
+router
+  .route("/api/v1/users")
+  .get(authenticate, isAdmin, usersController.findAllUsers);
 
 router
   .route("/api/v1/users/:id/profile")
@@ -25,8 +27,10 @@ router
 
 router
   .route("/api/v1/users/:id/password")
-  .patch(usersController.changePassword);
+  .patch(authenticate, usersController.changePassword);
 
-router.route("/api/v1/users/:id").delete(usersController.deleteSingleUser);
+router
+  .route("/api/v1/users/:id")
+  .delete(authenticate, isAdmin, usersController.deleteSingleUser);
 
 module.exports = router;

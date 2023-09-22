@@ -1,7 +1,6 @@
 const defaults = require("../config");
 const generateQueryString = ({ queryParams }) => {
   if (queryParams === undefined) {
-    console.log("asdf");
     throw new Error("Cannot convert undefined or null to object");
   }
   const queryString = Object.keys(queryParams)

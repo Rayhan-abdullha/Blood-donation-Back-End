@@ -610,7 +610,6 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-  "/admin/bloods/{id}":
     get:
       security:
         - bearerAuth: []
@@ -731,7 +730,7 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-  "/admin/bloods/{id}/status":
+  "/bloods/{id}/status":
     patch:
       security:
         - bearerAuth: []
@@ -923,7 +922,73 @@ paths:
                         example: message is required!
         "500":
           $ref: "#/components/responses/500"
-  "/admin/inboxes/{id}/reply":
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Inbox]
+      description: List al of Messages
+      parameters:
+        - $ref: "#/components/parameters/pagePrams"
+        - $ref: "#/components/parameters/limitPrams"
+        - $ref: "#/components/parameters/sortTypePrams"
+        - $ref: "#/components/parameters/sortByprams"
+      responses:
+        "200":
+          description: Retruns a list Campaigns
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                      - type: object
+                        properties:
+                          id:
+                            type: string
+                            example: "asldfasldf23423947"
+                          message:
+                            type: object
+                            properties:
+                              msg: 
+                                type: string
+                                example: 'Hi, Admin'
+                              repay:
+                                type: string
+                                example: 'Hello, how are you'
+                          status:
+                            type: string
+                            example: unseen
+                          link: 
+                            type: string
+                            example: '/admin/inboxes'
+                        required: [id, message, status, link]
+                      - $ref: "#/components/schemas/Timestamp"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/campaigns"
+                      nextPage:
+                        type: string
+                        example: "/campaigns?page=2&limit=10&sortType=dsc&sortBy=donateCount"
+                      prevPage:
+                        type: string
+                        example: "/campaigns?page=1&limit=10&sortType=dsc&sortBy=donateCount"
+                    required: [self]
+        "400":
+          $ref: "#/components/responses/400"
+        "500":
+          $ref: "#/components/responses/500"
+  "/inboxes/{id}/reply":
     patch:
       security:
         - bearerAuth: []
@@ -990,73 +1055,6 @@ paths:
           $ref: "#/components/responses/401"
         "404":
           $ref: "#/components/responses/404"
-        "500":
-          $ref: "#/components/responses/500"
-  "/admin/inboxes":
-    get:
-      security:
-        - bearerAuth: []
-      tags: [Inbox]
-      description: List al of Messages
-      parameters:
-        - $ref: "#/components/parameters/pagePrams"
-        - $ref: "#/components/parameters/limitPrams"
-        - $ref: "#/components/parameters/sortTypePrams"
-        - $ref: "#/components/parameters/sortByprams"
-      responses:
-        "200":
-          description: Retruns a list Campaigns
-          content:
-            "application/json":
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 200
-                  data:
-                    type: array
-                    items:
-                      allOf:
-                      - type: object
-                        properties:
-                          id:
-                            type: string
-                            example: "asldfasldf23423947"
-                          message:
-                            type: object
-                            properties:
-                              msg: 
-                                type: string
-                                example: 'Hi, Admin'
-                              repay:
-                                type: string
-                                example: 'Hello, how are you'
-                          status:
-                            type: string
-                            example: unseen
-                          link: 
-                            type: string
-                            example: '/admin/inboxes'
-                        required: [id, message, status, link]
-                      - $ref: "#/components/schemas/Timestamp"
-                  pagination:
-                    $ref: "#/components/schemas/Pagination"
-                  links:
-                    type: object
-                    properties:
-                      self:
-                        type: string
-                        example: "/campaigns"
-                      nextPage:
-                        type: string
-                        example: "/campaigns?page=2&limit=10&sortType=dsc&sortBy=donateCount"
-                      prevPage:
-                        type: string
-                        example: "/campaigns?page=1&limit=10&sortType=dsc&sortBy=donateCount"
-                    required: [self]
-        "400":
-          $ref: "#/components/responses/400"
         "500":
           $ref: "#/components/responses/500"
   "/inboxes/{id}":
@@ -1139,7 +1137,7 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-  "/admin/users":
+  "/users":
     get:
       security:
         - bearerAuth: []
@@ -1567,7 +1565,7 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-  "/admin/campaigns":
+  "/campaigns":
      post:
       security:
         - bearerAuth: []
@@ -1671,7 +1669,6 @@ paths:
           $ref: "#/components/responses/401"
         "500":
           $ref: "#/components/responses/500"
-  "/campaigns":
      get:
       security:
         - bearerAuth: []
@@ -1753,7 +1750,7 @@ paths:
           $ref: "#/components/responses/400"
         "500":
           $ref: "#/components/responses/500"
-  "/admin/campaigns/{id}":
+  "/campaigns/{id}":
     patch:
       security:
         - bearerAuth: []

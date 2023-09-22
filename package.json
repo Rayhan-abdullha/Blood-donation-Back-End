@@ -19,7 +19,6 @@
     "yamljs": "^0.3.0"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test jest --testTimeout=5000",
     "start": "src/server.js",
     "dev": "nodemon src/server.js"
   }

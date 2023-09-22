@@ -5,6 +5,7 @@ const findSingleVolunteer = async (req, res, next) => {
     const volunteer = await volunteerSeavice.findSingle({
       id,
       admin: req.admin,
+      authUser: req.authUser,
     });
     const response = {
       code: 200,

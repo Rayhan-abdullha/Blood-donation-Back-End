@@ -1,5 +1,6 @@
 const User = require("../../models/User");
 const Blood = require("../../models/Blood");
+const Inbox = require("../../models/Inbox");
 const Volunteer = require("../../models/Volunteer");
 const defaults = require("../../config");
 const { errors, hasing } = require("../../utils");
@@ -39,10 +40,13 @@ const findUserInfo = async (id) => {
   if (!id) {
     throw errors.BadRequest("Id is Required");
   }
-  let user = await User.findById(id).populate({ path: "volunteer" });
-
+  let user = await User.findById(id);
   if (!user) {
     throw errors.notFound();
+  }
+
+  if (user.role.includes("volunteer")) {
+    user = await User.findById(id).populate({ path: "volunteer" });
   }
 
   user = { ...user._doc, id: user.id };
@@ -51,27 +55,27 @@ const findUserInfo = async (id) => {
   return user;
 };
 
-const deleteUser = async ({ id }) => {
+const deleteUser = async ({ id, admin = false }) => {
+  if (!admin) {
+    throw errors.authorizetionError();
+  }
   if (!id) {
     throw errors.BadRequest();
   }
   const user = await User.findById(id);
 
-  console.log(user);
-
   if (!user) {
     throw errors.notFound();
   }
 
-  // const volunteer = await Volunteer(user.volunteer._id);
-  // const bloods = await Blood();
+  if (admin.id === id) {
+    throw errors.BadRequest("You are admin, you do not delete yourself");
+  }
 
-  // if (volunteer) {
-  //   await Volunteer.findByIdAndDelete(user.volunteer._id);
-  // }
-
-  // await User.findByIdAndDelete(id);
-
+  await User.findByIdAndDelete(id);
+  await Volunteer.deleteMany({ author: id });
+  await Blood.deleteMany({ author: id });
+  await Inbox.deleteMany({ author: id });
   return;
 };
 
@@ -113,9 +117,7 @@ const updatedInfo = async (
   }
 
   if (password) {
-    console.log(password);
     const hash = await hasing.generatehash(password);
-    console.log(hash);
     user.password = hash;
   }
   await user.save();

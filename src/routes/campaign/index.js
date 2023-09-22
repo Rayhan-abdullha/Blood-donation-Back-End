@@ -1,13 +1,8 @@
 const router = require("express").Router();
 const { controller: campaignController } = require("../../app/v1/campaign");
-const {
-  campaignSchema,
-  authenticate,
-  authorization,
-  isAdmin,
-} = require("../../middleware");
+const { campaignSchema, isAdmin } = require("../../middleware");
 router
-  .route("/api/v1/admin/campaigns")
+  .route("/api/v1/campaigns")
   .post(
     isAdmin,
     campaignSchema.createCampaignValidaion,
@@ -23,7 +18,7 @@ router
   .get(isAdmin, campaignController.findAllCampaign);
 
 router
-  .route("/api/v1/admin/campaigns/:id")
+  .route("/api/v1/campaigns/:id")
   .patch(isAdmin, campaignController.updateCampaign)
   .delete(isAdmin, campaignController.deleteSingleCampaign);
 module.exports = router;

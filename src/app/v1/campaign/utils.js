@@ -1,6 +1,7 @@
 const campaignDataTransformation = ({ campaigns = [] }) => {
   const data = campaigns.map((item) => {
     return {
+      id: item.id,
       title: item.title,
       description: item.description,
       cover: item.cover,
