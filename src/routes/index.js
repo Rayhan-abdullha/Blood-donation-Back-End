@@ -1,10 +1,15 @@
-const router = require("express").Router();
+const authRoutes = require("./auth");
+const volunteerRoutes = require("./volunteer");
+const bloodRoutes = require("./blood");
+const inboxRoutes = require("./inbox");
+const campaignRoutes = require("./campaign");
+const userRoutes = require("./users");
 
-router
-  .route("/api/v1/auth")
-  .get((req, res) => {
-    res.send("hello");
-  })
-  .post();
-
-module.exports = router;
+module.exports = {
+  authRoutes,
+  volunteerRoutes,
+  bloodRoutes,
+  inboxRoutes,
+  campaignRoutes,
+  userRoutes,
+};

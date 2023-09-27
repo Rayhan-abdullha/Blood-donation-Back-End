@@ -13,18 +13,16 @@ servers:
 tags:
   - name: Auth
     description: Authentication Endpoints (public)
+  - name: User
+    description: Review Endpoints (private)
   - name: Volunteer
     description: Volunteer Endpoints (private)
   - name: Blood
     description: Blood Endpoints (private)
-  - name: Review
-    description: Review Endpoints (private)
   - name: Campaign
     description: Campaign Endpoints (private)
   - name: Inbox
     description: Inbox Endpoints (private)
-  - name: Dashboard
-    description: Dashboard Endpoints (private)
 paths:
   "/auth/register":
     post:
@@ -138,6 +136,8 @@ paths:
           $ref: "#/components/responses/500"
   "/volunteers":
     get:
+      security:
+        - bearerAuth: []
       tags: [Volunteer]
       description: List of volunteers
       parameters:
@@ -174,6 +174,12 @@ paths:
                               type: string
                               format: url
                               example: http://picture.jpg
+                            donateCount:
+                              type: number
+                              example: 05
+                            status:
+                              type: string
+                              example: volunteer
                             links:
                               type: string
                               example: "/volunteers/k@3ala3kdladc33bpwo3"
@@ -187,17 +193,25 @@ paths:
                       self:
                         type: string
                         example: "/volunteers"
+                      nextPage:
+                        type: string
+                        example: "/volunteers?page=2&limit=10&sortType=dsc&sortBy=donateCount"
+                      prevPage:
+                        type: string
+                        example: "/volunteers?page=1&limit=10&sortType=dsc&sortBy=donateCount"
                     required: [self]
         "400":
           $ref: "#/components/responses/400"
         "500":
           $ref: "#/components/responses/500"
     post:
-      description: Create a new Volunteer
+      security:
+        - bearerAuth: []
+      description: create a new user
       tags: [Volunteer]
       requestBody:
         content:
-          "application/josn":
+          "application/json":
             schema:
               $ref: "#/components/schemas/VolunteerData"
       responses:
@@ -210,7 +224,7 @@ paths:
                 properties:
                   code:
                     type: integer
-                    example: 200
+                    example: 201
                   message:
                     type: string
                     example: Volunteer request has been sent
@@ -238,9 +252,6 @@ paths:
                       delete:
                         type: string
                         example: "/volunteers/asldfasldf23423947"
-                      edit:
-                        type: string
-                        example: "/volunteers/asldfasldf23423947"
                     required: [self, delete, edit]
                 required: [code, message, data, links]
         "400":
@@ -249,10 +260,20 @@ paths:
           $ref: "#/components/responses/401"
         "500":
           $ref: "#/components/responses/500"
-  "/volunteers/:id":
+  "/volunteers/{id}":
     get:
+      security:
+        - bearerAuth: []
       description: Get a Single Volunteer
       tags: [Volunteer]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: volunteer ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
       responses:
         "200":
           description: Return a Single Volunteer
@@ -276,15 +297,52 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-    patch:
-      description: Update a Single Volunteer
+    delete:
+      security:
+        - bearerAuth: []
+      description: Delete a Volunteer Requests
       tags: [Volunteer]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: volunteer ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/volunteers/{id}/status":
+    patch:
+      security:
+        - bearerAuth: []
+      description: Update a Single Volunteer Status
+      tags: [Volunteer]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: volunteer ID
+          schema:
+            type: string
+            example: '6503308cd64533c41dd94d3f'
       requestBody:
         content:
-          "application/josn":
+          "application/json":
             schema:
-              allOf:
-                - $ref: "#/components/schemas/VolunteerData"
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: volunteer
+              required: [status]
       responses:
         "200":
           description: Retruns a Upadated volunteer data
@@ -298,15 +356,24 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: Updated Successfull
+                    example: Updated Volunteer
                   data:
-                    $ref: "#/components/schemas/VolunteerData"
+                    allOf:
+                      - type: object
+                        properties:
+                          id: 
+                            type: string
+                            example: 650314f55b911c059f2c9123
+                          status:
+                            type: string
+                            example: volunteer
+                      - $ref: "#/components/schemas/Timestamp"
                   links:
                     type: object
                     properties:
                       self:
                         type: string
-                        example: "/volunteers/asdlfalsdfasf33aslf"
+                        example: "/volunteers/asdlfalsdfasf33aslf/status"
         "400":
           $ref: "#/components/responses/400"
         "401":
@@ -315,20 +382,10 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-    delete:
-      description: Delete a Volunteer Requests
-      tags: [Volunteer]
-      responses:
-        "204":
-          $ref: "#/components/responses/204"
-        "401":
-          $ref: "#/components/responses/401"
-        "404":
-          $ref: "#/components/responses/404"
-        "500":
-          $ref: "#/components/responses/500"
   "/bloods":
     get:
+      security:
+        - bearerAuth: []
       tags: [Blood]
       description: List of Blood Requests
       parameters:
@@ -386,11 +443,13 @@ paths:
         "500":
           $ref: "#/components/responses/500"
     post:
+      security:
+        - bearerAuth: []
       description: Create a Blood Request
       tags: [Blood]
       requestBody:
         content:
-          "application/josn":
+          "application/json":
             schema:
               type: object
               properties:
@@ -406,7 +465,7 @@ paths:
                 nationalID:
                   type: string
                   example: 6987451236548455
-                phoneNo:
+                phone:
                   type: string
                   example: 01798716196
                 patientInfo:
@@ -424,7 +483,7 @@ paths:
                       example: A+
                     phone:
                       type: string
-                      example: 0178716197
+                      example: 01798716197
                     nationalID:
                       type: string
                       example: 666676736876616
@@ -437,7 +496,7 @@ paths:
                     fatherName:
                       type: string
                       example: Mohiuddin Chowdhury
-                    MotherName:
+                    motherName:
                       type: string
                       example: Ghazala Chowdhury
                     cover:
@@ -456,13 +515,13 @@ paths:
                         dist:
                           type: string
                           example: Bhola
-                        upazilla:
+                        upazila:
                           type: string
                           example: charfassion
                         houseName:
                           type: string
                           example: "Mehjabin Vila"
-                      required: [country, division, dist, upazilla, houseName]
+                      required: [country, division, dist, upazila, houseName]
                   required:
                     [
                       name,
@@ -489,7 +548,7 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: Volunteer request has been sent
+                    example: Blood request has been sent
                   data:
                     allOf:
                       - type: object
@@ -528,10 +587,42 @@ paths:
           $ref: "#/components/responses/401"
         "500":
           $ref: "#/components/responses/500"
-  "/bloods/:id":
+  "/bloods/{id}":
+    delete:
+      security:
+        - bearerAuth: []
+      description: Delete a Blood Request
+      tags: [Blood]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Blood ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
     get:
+      security:
+        - bearerAuth: []
       description: Get a Single Blood Request
       tags: [Blood]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Blood ID
+          schema:
+            type: string
+            example: '650856ddbce2d8fe74bde6a0'
       responses:
         "200":
           description: Return a Single Blood Request
@@ -544,23 +635,209 @@ paths:
                     type: integer
                     format: int32
                     example: 200
+                  title:
+                    type: string
+                    example: Need 2 bags Blood
+                  body:
+                    type: string
+                    example: I nedd 2 bags blood. plese help me. this is emargency.pataint is my wife
+                  place:
+                    type: string
+                    example: Charfassion hospital
+                  status:
+                    type: string
+                    example: 'pending'
+                  nationalID:
+                    type: string
+                    example: 6987451236548455
+                  phone:
+                    type: string
+                    example: 01798716196
+                  patientInfo:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: Mehjabin Khan
+                      age:
+                        type: integer
+                        format: int32
+                        example: 31
+                      bloodGroup:
+                        type: string
+                        example: A+
+                      phone:
+                        type: string
+                        example: 01798716197
+                      nationalID:
+                        type: string
+                        example: 666676736876616
+                      occupation:
+                        type: string
+                        example: actores
+                      gender:
+                        type: string
+                        example: female
+                      fatherName:
+                        type: string
+                        example: Mohiuddin Chowdhury
+                      motherName:
+                        type: string
+                        example: Ghazala Chowdhury
+                      cover:
+                        type: string
+                        format: url
+                        example: http://w3.unsplash.com
+                      address:
+                        type: object
+                        properties:
+                          country:
+                            type: string
+                            example: Bangladesh
+                          division:
+                            type: string
+                            example: Barishal
+                          dist:
+                            type: string
+                            example: Bhola
+                          upazila:
+                            type: string
+                            example: charfassion
+                          houseName:
+                            type: string
+                            example: "Mehjabin Vila"
+                        required: [country, division, dist, upazila, houseName]
+                      createdAt:
+                        type: string
+                        example: "10:33:21"
+                      updatedAt:
+                        type: string
+                        example: "10:33:21"
+                    required:
+                      [
+                        name,
+                        age,
+                        phone,
+                        occupation,
+                        gender,
+                        fatherName,
+                        motherName,
+                        bloodGroup,
+                        address,
+                      ]
+                required: [title, place, phoneNo, patientInfo]
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/bloods/{id}/status":
+    patch:
+      security:
+        - bearerAuth: []
+      description: Update a Single Blood Request
+      tags: [Blood]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Blood ID
+          schema:
+            type: string
+            example: '6503308cd64533c41dd94d3f'
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: in-progress
+      responses:
+        "200":
+          description: Retruns a Upadated volunteer data
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Updated Successfull
+                  data:
+                    type: object
+                    properties:
+                      status: 
+                        type: string
+                        example: status
+                    required:
+                      - status
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "dashboard/bloods/asdlfalsdfasf33aslf"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/users/{id}/bloods":
+    get:
+      security:
+        - bearerAuth: []
+      description: Get all Bloods Request By User ID
+      tags: [Blood]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
+      responses:
+        "200":
+          description: Return a Users Blood Request
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
                   data:
                     allOf:
                       - type: object
                         properties:
-                          _id:
+                          id:
                             type: string
                             example: aas899cn2afadhfaskf
-                          name:
+                          patientName:
                             type: string
-                            example: Rayhan abdullah
+                            example: Karima
+                          title:
+                            type: string
+                            example: I need one bag blood
+                          body:
+                            type: string
+                            example: please help me, i need blood for my sister.
                           bloodGroup:
                             type: string
                             example: O+
                           status:
                             type: string
-                            example: in progress
-                        required: [_id, name, bloodGroup, status]
+                            example: done
+                        required: [id, name, bloodGroup, status]
                       - $ref: "#/components/schemas/Timestamp"
                   links:
                     type: string
@@ -569,20 +846,10 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-    delete:
-      description: Delete a Blood Request
-      tags: [Blood]
-      responses:
-        "204":
-          $ref: "#/components/responses/204"
-        "401":
-          $ref: "#/components/responses/401"
-        "404":
-          $ref: "#/components/responses/404"
-        "500":
-          $ref: "#/components/responses/500"
   "/inboxes":
     post:
+      security:
+        - bearerAuth: []
       description: Send a Messsage to Admin
       tags: [Inbox]
       requestBody:
@@ -607,7 +874,7 @@ paths:
                     example: 201
                   message:
                     type: string
-                    example: Volunteer request has been sent
+                    example: Message has been sent
                   data:
                     allOf:
                       - type: object
@@ -617,7 +884,7 @@ paths:
                             example: "asldfasldf23423947"
                           message:
                             type: string
-                            example: Rayhan Abdullah
+                            example: "Hi, admin, i want to be a volunteer, can i?"
                           status:
                             type: string
                             example: unseen
@@ -655,13 +922,181 @@ paths:
                         example: message is required!
         "500":
           $ref: "#/components/responses/500"
-  "/inboxes/:userId/messages":
     get:
-      description: Get all message for an users
+      security:
+        - bearerAuth: []
       tags: [Inbox]
+      description: List al of Messages
+      parameters:
+        - $ref: "#/components/parameters/pagePrams"
+        - $ref: "#/components/parameters/limitPrams"
+        - $ref: "#/components/parameters/sortTypePrams"
+        - $ref: "#/components/parameters/sortByprams"
       responses:
         "200":
-          description: Retruns a list of volunteers
+          description: Retruns a list Campaigns
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                      - type: object
+                        properties:
+                          id:
+                            type: string
+                            example: "asldfasldf23423947"
+                          message:
+                            type: object
+                            properties:
+                              msg: 
+                                type: string
+                                example: 'Hi, Admin'
+                              repay:
+                                type: string
+                                example: 'Hello, how are you'
+                          status:
+                            type: string
+                            example: unseen
+                          link: 
+                            type: string
+                            example: '/admin/inboxes'
+                        required: [id, message, status, link]
+                      - $ref: "#/components/schemas/Timestamp"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/campaigns"
+                      nextPage:
+                        type: string
+                        example: "/campaigns?page=2&limit=10&sortType=dsc&sortBy=donateCount"
+                      prevPage:
+                        type: string
+                        example: "/campaigns?page=1&limit=10&sortType=dsc&sortBy=donateCount"
+                    required: [self]
+        "400":
+          $ref: "#/components/responses/400"
+        "500":
+          $ref: "#/components/responses/500"
+  "/inboxes/{id}/reply":
+    patch:
+      security:
+        - bearerAuth: []
+      description: Update Inbox messages and send reply
+      tags: [Inbox]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Inbox ID
+          schema:
+            type: string
+            example: '6503308cd64533c41dd94d3f'
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: seen
+                reply: 
+                  type: string
+                  example: i am fine
+              required: [status, reply]
+      responses:
+        "200":
+          description: Retruns a Upadated volunteer data
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: reply message
+                  data:
+                    allOf:
+                      - type: object
+                        properties:
+                          id: 
+                            type: string
+                            example: 650314f55b911c059f2c9123
+                          status:
+                            type: string
+                            example: seen
+                          reply:
+                            type: string
+                            example: i am fine
+                      - $ref: "#/components/schemas/Timestamp"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/volunteers/asdlfalsdfasf33aslf/status"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/inboxes/{id}":
+    delete:
+      security:
+        - bearerAuth: []
+      description: Delete a Message
+      tags: [Inbox]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Inbox ID
+          schema:
+            type: string
+            example: 'lkjjdsaiuencdmcndgeujd'
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/users/{id}/inboxes":
+    get:
+      security:
+        - bearerAuth: []
+      description: Get all message for an users
+      tags: [Inbox]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
+      responses:
+        "200":
+          description: Retruns all messages for an users
           content:
             "application/json":
               schema:
@@ -702,24 +1137,151 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-  "/dashboard/bloods/:id":
+  "/users":
+    get:
+      security:
+        - bearerAuth: []
+      tags: [User]
+      description: List of users
+      parameters:
+        - $ref: "#/components/parameters/pagePrams"
+        - $ref: "#/components/parameters/limitPrams"
+        - $ref: "#/components/parameters/sortTypePrams"
+        - $ref: "#/components/parameters/sortByprams"
+        - $ref: "#/components/parameters/searchPrams"
+      responses:
+        "200":
+          description: Retruns a list of Users
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                        - type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int32
+                              example: k@3ala3kdladc33bpwo3
+                            name:
+                              type: string
+                              example: Rayhan Abdullah
+                            cover:
+                              type: string
+                              format: url
+                              example: http://picture.jpg
+                            role:
+                              type: array
+                              example: ['user', 'admin']
+                            link:
+                              type: string
+                              example: "/admin/users/k@3ala3kdladc33bpwo3"
+                          required: [id, name, link, cover, role]
+                        - $ref: "#/components/schemas/Timestamp"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/admin/users"
+                      nextPage:
+                        type: string
+                        example: "/admin/users?page=2&limit=10&sortType=dsc&sortBy=donateCount"
+                      prevPage:
+                        type: string
+                        example: "/admin/users?page=1&limit=10&sortType=dsc&sortBy=donateCount"
+                required:
+                  - "links"
+        "400":
+          $ref: "#/components/responses/400"
+        "500":
+          $ref: "#/components/responses/500"
+  "/users/{id}/profile":
     patch:
-      description: Update a Single Blood Request
-      tags: [Dashboard]
+      security:
+        - bearerAuth: []
+      description: Update User information
+      tags: [User]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User ID
+          schema:
+            type: string
+            example: '6503308cd64533c41dd94d3f'
       requestBody:
         content:
-          "application/josn":
+          "application/json":
             schema:
               type: object
               properties:
-                status: 
+                name:
                   type: string
-                  example: status
-              required:
-                - status
+                  example: volunteer
+                email:
+                  type: string
+                  example: 'coder@gmail.com'
+                password:
+                  type: string
+                  example: test1122
+                cover:
+                  type: string
+                  example: http://picture.jpg
+                occupation:
+                  type: string
+                  example: "Software Engineer"
+                age:
+                  type: integer
+                  example: 30
+                gender:
+                  type: string
+                  example: "Male"
+                study:
+                  type: string
+                  example: "Computer Science"
+                bloodGroup:
+                  type: string
+                  example: "A+"
+                picture:
+                  type: string
+                  example: "http://example.com/cover.jpg"
+                nationalId:
+                  type: string
+                  example: "1234567890"
+                address:
+                  type: object
+                  properties:
+                    country:
+                      type: string
+                      example: "United States"
+                    division:
+                      type: string
+                      example: "New York"
+                    dist:
+                      type: string
+                      example: "Manhattan"
+                    upazila:
+                      type: string
+                      example: "Midtown"
+                    currentAddress:
+                      type: string
+                      example: "123 Main St, Apt 4B"
+                    parmanentAddress:
+                      type: string
+                      example: "456 Elm St, Apt 7C"    
       responses:
         "200":
-          description: Retruns a Upadated volunteer data
+          description: Retruns User Data
           content:
             "application/json":
               schema:
@@ -730,21 +1292,66 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: Updated Successfull
+                    example: Updated Volunteer
                   data:
-                    type: object
-                    properties:
-                      status: 
-                        type: string
-                        example: status
-                    required:
-                      - status
+                    allOf:
+                      - type: object
+                        properties:
+                          name:
+                            type: string
+                            example: volunteer
+                          email:
+                            type: string
+                            example: 'coder@gmail.com'
+                          cover:
+                            type: string
+                            example: http://picture.jpg
+                          occupation:
+                            type: string
+                            example: "Software Engineer"
+                          age:
+                            type: integer
+                            example: 30
+                          gender:
+                            type: string
+                            example: "Male"
+                          study:
+                            type: string
+                            example: "Computer Science"
+                          bloodGroup:
+                            type: string
+                            example: "A+"
+                          picture:
+                            type: string
+                            example: "http://example.com/cover.jpg"
+                          nationalId:
+                            type: string
+                            example: "1234567890"
+                          address:
+                            type: object
+                            properties:
+                              division:
+                                type: string
+                                example: "New York"
+                              dist:
+                                type: string
+                                example: "Manhattan"
+                              upazila:
+                                type: string
+                                example: "Midtown"
+                              currentAddress:
+                                type: string
+                                example: "123 Main St, Apt 4B"
+                              streetAddress:
+                                type: string
+                                example: "456 Elm St, Apt 7C"  
+                      - $ref: "#/components/schemas/Timestamp"
                   links:
                     type: object
                     properties:
                       self:
                         type: string
-                        example: "dashboard/bloods/asdlfalsdfasf33aslf"
+                        example: "/volunteers/asdlfalsdfasf33aslf/status"
         "400":
           $ref: "#/components/responses/400"
         "401":
@@ -753,7 +1360,525 @@ paths:
           $ref: "#/components/responses/404"
         "500":
           $ref: "#/components/responses/500"
-
+    get:
+      security:
+        - bearerAuth: []
+      description: Get a Single User Profile
+      tags: [User]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User ID
+          schema:
+            type: string
+            example: 'kmnad33aasdf3biadylas'
+      responses:
+        "200":
+          description: Return a Single User Info
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: aas899cn2afadhfaskf
+                          name:
+                            type: string
+                            example: Rayhan abdullah
+                          email:
+                            type: string
+                            example: O+
+                          cover:
+                            type: string
+                            example: in progress
+                          role:
+                            type: array
+                            example: ['user', 'vounteer']
+                        required: [id, name,email,role,]
+                      volunteer:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: aas899cn2afadhfaskf
+                          bloodGroup:
+                            type: string
+                            example: O+
+                          occupation:
+                            type: string
+                            example: Rayhan abdullah
+                          age:
+                            type: string
+                            example: O+
+                          gender:
+                            type: string
+                            example: in progress
+                          phone:  
+                            type: string
+                            example: 01798716196
+                          status:
+                            type: string
+                            example: volunteer
+                          bio:
+                            type: string
+                            example: volunteer
+                          study:
+                            type: string
+                            example: volunteer
+                          cover:
+                            type: string
+                            example: volunteer
+                          nationalID:
+                            type: string
+                            example: volunteer
+                          address:
+                            type: object
+                            properties:
+                              country:
+                                type: string
+                                example: Bangladesh
+                              division :
+                                type: string
+                                example: Bangladesh
+                              dist:
+                                type: string
+                                example: Bangladesh
+                              upazila:
+                                type: string
+                                example: Bangladesh
+                              currentAddress:
+                                type: string
+                                example: Bangladesh
+                              parmanentAddress:
+                                type: string
+                                example: Bangladesh
+                            required:
+                              - "country"
+                              - "division"
+                              - "dist"
+                              - "upazila"
+                              - "currentAddress"
+                              - "parmanentAddress"
+                        required: [id, phone, occupation,age,gender,status,bloodGroup]
+                  links:
+                    type: string
+                    example: "/users/asdlfalsdfasf33aslf/profile"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/users/{id}":
+    delete:
+      security:
+        - bearerAuth: []
+      description: Delete a Single User
+      tags: [User]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User ID
+          schema:
+            type: string
+            example: 'sldflasdfladfadf'
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/users/{id}/password":
+    patch:
+      security:
+        - bearerAuth: []
+      description: Change User password
+      tags: [User]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: volunteer ID
+          schema:
+            type: string
+            example: '6503308cd64533c41dd94d3f'
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: test1122
+              required: [password]
+      responses:
+        "200":
+          description: Retruns a Upadated Password
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Updated Volunteer
+                  data:
+                    allOf:
+                      - type: object
+                        properties:
+                          id: 
+                            type: string
+                            example: 650314f55b911c059f2c9123
+                          password:
+                            type: string
+                            example: test11
+                      - $ref: "#/components/schemas/Timestamp"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/users/asdlfalsdfasf33aslf/password"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/campaigns":
+     post:
+      security:
+        - bearerAuth: []
+      description: Create a new Campaign
+      tags: [Campaign]
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Free Blood Check
+                body:
+                  type: string
+                  example: '2 days free blood check campain in Bhola'
+                cover:
+                  type: string
+                  format: url
+                  example: http://picture.jpg
+                open: 
+                  type: string
+                  example: '9AM'
+                close: 
+                  type: string
+                  example: '3PM'  
+                startDate:
+                  type: string
+                  example: 05/11/2023
+                endDate:
+                  type: string
+                  example: 06/11/2023
+              required: [title,body,cover, open, close, startDate, endDate]
+      responses:
+        "201":
+          description: Retruns Campaign Data
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: Volunteer request has been sent
+                  data:
+                    allOf:
+                      - type: object
+                        properties:
+                          id:
+                            type: integer
+                            format: int32
+                            example: jlmnhydgbvnnxwhumcncbhs
+                          title:
+                            type: string
+                            example: Free Blood Check
+                          body:
+                            type: string
+                            example: '2 days free blood check campain in Bhola'
+                          cover:
+                            type: string
+                            format: url
+                            example: http://picture.jpg
+                          open: 
+                            type: string
+                            example: '9AM'
+                          close: 
+                            type: string
+                            example: '3PM'  
+                          startDate:
+                            type: string
+                            example: 05/11/2023
+                          endDate:
+                            type: string
+                            example: 06/11/2023
+                          status:
+                            type: string
+                            example: draft
+                          links:
+                            type: string
+                            example: "/campaigns/k@3ala3kdladc33bpwo3"
+                        required: [id, title, links, open, close, body, startDate, endDate]
+                      - $ref: "#/components/schemas/Timestamp"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/campaigns/asldfasldf23423947"
+                      delete:
+                        type: string
+                        example: "/campaigns/asldfasldf23423947"
+                    required: [self, delete, edit]
+                required: [code, message, data, links]
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+     get:
+      security:
+        - bearerAuth: []
+      tags: [Campaign]
+      description: List of Campaigns
+      parameters:
+        - $ref: "#/components/parameters/pagePrams"
+        - $ref: "#/components/parameters/limitPrams"
+        - $ref: "#/components/parameters/sortTypePrams"
+        - $ref: "#/components/parameters/sortByprams"
+        - $ref: "#/components/parameters/searchPrams"
+      responses:
+        "200":
+          description: Retruns a list Campaigns
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                        - type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int32
+                              example: jlmnhydgbvnnxwhumcncbhs
+                            title:
+                              type: string
+                              example: Free Blood Check
+                            body:
+                              type: string
+                              example: '2 days free blood check campain in Bhola'
+                            cover:
+                              type: string
+                              format: url
+                              example: http://picture.jpg
+                            open: 
+                              type: string
+                              example: '9AM'
+                            close: 
+                              type: string
+                              example: '3PM'  
+                            startDate:
+                              type: string
+                              example: 05/11/2023
+                            endDate:
+                              type: string
+                              example: 06/11/2023
+                            status:
+                              type: string
+                              example: completed
+                            links:
+                              type: string
+                              example: "/campaigns/flmnkhytfdcghajsdfj"
+                          required: [id, title, links, open, close, cover, body, startDate, endDate]
+                        - $ref: "#/components/schemas/Timestamp"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/campaigns"
+                      nextPage:
+                        type: string
+                        example: "/campaigns?page=2&limit=10&sortType=dsc&sortBy=donateCount"
+                      prevPage:
+                        type: string
+                        example: "/campaigns?page=1&limit=10&sortType=dsc&sortBy=donateCount"
+                    required: [self]
+        "400":
+          $ref: "#/components/responses/400"
+        "500":
+          $ref: "#/components/responses/500"
+  "/campaigns/{id}":
+    patch:
+      security:
+        - bearerAuth: []
+      description: Change User password
+      tags: [Campaign]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Campaign ID
+          schema:
+            type: string
+            example: '6503308cd64533c41dd94d3f'
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Free Blood Check
+                body:
+                  type: string
+                  example: '2 days free blood check campain in Bhola'
+                cover:
+                  type: string
+                  format: url
+                  example: http://picture.jpg
+                open: 
+                  type: string
+                  example: '9AM'
+                close: 
+                  type: string
+                  example: '3PM'
+                status:
+                  type: string
+                  example: in-progress 
+                startDate:
+                  type: string
+                  example: 05/11/2023
+                endDate:
+                  type: string
+                  example: 06/11/2023
+      responses:
+        "200":
+          description: Retruns a Upadated Password
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Updated Campaing Info
+                  data:
+                    allOf:
+                      - type: object
+                        properties:
+                          id: 
+                            type: string
+                            example: 650314f55b911c059f2c9123
+                          title:
+                            type: string
+                            example: Free Blood Check
+                          body:
+                            type: string
+                            example: '2 days free blood check campain in Bhola'
+                          cover:
+                            type: string
+                            format: url
+                            example: http://picture.jpg
+                          status:
+                            type: string
+                            example: in-progress
+                          open: 
+                            type: string
+                            example: '9AM'
+                          close: 
+                            type: string
+                            example: '3PM'  
+                          startDate:
+                            type: string
+                            example: 05/11/2023
+                          endDate:
+                            type: string
+                            example: 06/11/2023
+                      - $ref: "#/components/schemas/Timestamp"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: "/admin/campaigns/asdlfalsdfasf33aslf"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+    delete:
+      security:
+        - bearerAuth: []
+      description: Delete a Campaign
+      tags: [Campaign]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Campaign ID
+          schema:
+            type: string
+            example: 'lkjjdsaiuencdmcndgeujd'
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+# components
 components:
   securitySchemes:
     bearerAuth:
@@ -791,20 +1916,17 @@ components:
           format: int32
           example: 3
         next:
-          type: string
-          format: url
-          example: "/volunteers?page=3&limit=10"
+          type: number
+          format: int32
+          example: 3
         prev:
-          type: string
-          format: url
-          example: "/volunteers?page=1&limit=10"
+          type: number
+          format: int32
+          example: 2
       required: [page, limit, totlaItem, totalPages]
     VolunteerData:
       type: object
       properties:
-        _id:
-          type: string
-          example: "asdlfalsdfasf33aslf"
         age:
           type: integer
           format: int32
@@ -818,6 +1940,9 @@ components:
         gender:
           type: string
           example: male
+        phone: 
+          type: string
+          example: 01798716196
         study:
           type: string
           example: honours 3rd year
@@ -828,25 +1953,22 @@ components:
         address:
           type: object
           properties:
-            country:
-              type: string
-              example: Bangladesh
             division:
               type: string
               example: barishal
             dist:
               type: string
               example: Bhola
-            upazilla:
+            upazila:
+              type: string
+              example: Charfassion
+            streetAddress:
               type: string
               example: Charfassion
             currentAddress:
               type: string
-              example: Charfassion
-            parmanentAddress:
-              type: string
-              example: Charfassion
-          required: [country, division, dist, upazilla, parmanentAddress]
+              example: Dhaka
+          required: [division, dist, upazilla, currentAddress, streetAddress]
         nationalId:
           type: string
           example: 0983734826324
@@ -869,7 +1991,7 @@ components:
               message:
                 type: string
                 example: "Bad request!"
-              data:
+              errorMessages:
                 type: array
                 items:
                   type: object

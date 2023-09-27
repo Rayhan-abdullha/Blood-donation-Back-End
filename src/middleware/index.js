@@ -1,13 +1,22 @@
-const express = require("express");
-const cors = require("cors");
-const swaggerUi = require("swagger-ui-express");
-const YAML = require("yamljs");
-const swaggerDoc = YAML.load("./swagger.yaml");
-
-const applyMiddleWare = (app) => {
-  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
-  app.use(express.json());
-  app.use(cors());
+const applyMiddleWare = require("./applyMiddlware");
+const userSchema = require("./userSchemaValidate");
+const volunterSchema = require("./volunteerSchemaValidation");
+const bloodSchema = require("./bloodShemaValidation");
+const inboxSchema = require("./inboxSchemaValidation");
+const campaignSchema = require("./campaignSchemaValidation");
+const authenticate = require("./authenticate");
+const authorization = require("./authorization");
+const ownerShip = require("./ownerShip");
+const isAdmin = require("./isAdmin");
+module.exports = {
+  applyMiddleWare,
+  userSchema,
+  volunterSchema,
+  bloodSchema,
+  inboxSchema,
+  campaignSchema,
+  authenticate,
+  authorization,
+  ownerShip,
+  isAdmin,
 };
-
-module.exports = applyMiddleWare;
