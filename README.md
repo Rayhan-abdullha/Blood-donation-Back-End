@@ -8,7 +8,7 @@ I Built REST API for the Public Blood Donation System. The user will be able to 
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Authentication](#authentication) (if applicable)
+- [Authentication](#authentication)
 - [Endpoints](#endpoints)
 - [Request Examples](#request-examples)
 - [Response Examples](#request-and-response-examples)
@@ -21,7 +21,7 @@ I Built REST API for the Public Blood Donation System. The user will be able to 
 
 ```bash
    # Clone the repository
-   git clone <repository-url>
+   git clone https://github.com/Rayhan-abdullha/Blood-donation-Back-End.git
 
    # Install dependencies
    npm install
